@@ -1,0 +1,19 @@
+{
+  "players": [
+    {
+      "id": 1,
+      "username": "Mcking",
+      "passwordHash": "$2b$12$44dUklt1l4xmu3D0TXXstOTrHiYQq3F2euu5vfdWkEsJHPTYbZxE.",
+      "mcUsername": "Mcking",
+      "mcUUID": "c7b4f5ce-9e8c-30aa-8385-371b4fa4ecd5",
+      "mcUUIDType": "offline",
+      "email": "mcking_714@qq.com",
+      "whitelisted": true,
+      "registeredAt": "2026-05-07T20:12:53.000757",
+      "lastLoginAt": "2026-05-10T12:24:59.572353",
+      "whitelistSynced": true,
+      "banned": false
+    }
+  ],
+  "nextId": 2
+}
