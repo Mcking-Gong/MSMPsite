@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSMP - Minecraft 服务器</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('Minecraft_Next_Font_12px.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* ====== 深色主题变量 ====== */
+        :root,
+        [data-theme="dark"] {
+            --mc-dark: #1a1a2e;
+            --mc-darker: #0f0f1a;
+            --mc-green: #4ade80;
+            --mc-green-dark: #22c55e;
+            --mc-gold: #fbbf24;
+            --mc-diamond: #22d3ee;
+            --mc-redstone: #ef4444;
+            --mc-purple: #a78bfa;
+            --mc-stone: #6b7280;
+            --card-bg: rgba(30, 30, 50, 0.85);
+            --card-border: rgba(74, 222, 128, 0.2);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --navbar-bg: rgba(15, 15, 26, 0.92);
+            --section-alt-bg: rgba(15, 15, 26, 0.5);
+            --footer-bg: rgba(15, 15, 26, 0.8);
+            --hero-g1: rgba(74, 222, 128, 0.08);
+            --hero-g2: rgba(34, 211, 238, 0.06);
+            --hero-g3: rgba(167, 139, 250, 0.05);
+            --join-glow: rgba(74, 222, 128, 0.06);
+            --info-chip-bg: rgba(30, 30, 50, 0.6);
+            --version-tag-bg: rgba(100, 100, 120, 0.15);
+            --version-tag-border: rgba(100, 100, 120, 0.2);
+            --copy-btn-bg: rgba(74, 222, 128, 0.15);
+            --copy-btn-border: rgba(74, 222, 128, 0.3);
+            --particle-opacity: 1;
+            --tag-update-bg: rgba(74, 222, 128, 0.15);
+            --tag-event-bg: rgba(251, 191, 36, 0.15);
+            --tag-notice-bg: rgba(167, 139, 250, 0.15);
+            --tag-urgent-bg: rgba(239, 68, 68, 0.15);
+            --pinned-bg: rgba(251, 191, 36, 0.03);
+            --rule-icon-green: rgba(74, 222, 128, 0.15);
+            --rule-icon-gold: rgba(251, 191, 36, 0.15);
+            --rule-icon-diamond: rgba(34, 211, 238, 0.15);
+            --rule-icon-purple: rgba(167, 139, 250, 0.15);
+            --rule-icon-red: rgba(239, 68, 68, 0.15);
+            --rule-icon-cyan: rgba(6, 182, 212, 0.15);
+            --nav-link-hover-bg: rgba(74, 222, 128, 0.1);
+            --hero-badge-bg: rgba(74, 222, 128, 0.1);
+            --hero-badge-border: rgba(74, 222, 128, 0.3);
+            --checkbox-bg: rgba(15, 15, 26, 0.6);
+            --summary-divider: rgba(255, 255, 255, 0.03);
+            --scrollbar-thumb: rgba(74, 222, 128, 0.3);
+            --modal-overlay-bg: rgba(0, 0, 0, 0.7);
+            --logo-shadow: rgba(74, 222, 128, 0.3);
+            --toast-bg: rgba(30, 30, 50, 0.95);
+            --toast-border: rgba(74, 222, 128, 0.3);
+        }
+
+        /* ====== 浅色主题变量 ====== */
+        [data-theme="light"] {
+            --mc-dark: #f0f2f5;
+            --mc-darker: #e8eaed;
+            --mc-green: #16a34a;
+            --mc-green-dark: #15803d;
+            --mc-gold: #d97706;
+            --mc-diamond: #0891b2;
+            --mc-redstone: #dc2626;
+            --mc-purple: #7c3aed;
+            --mc-stone: #6b7280;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-border: rgba(22, 163, 74, 0.2);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --navbar-bg: rgba(255, 255, 255, 0.92);
+            --section-alt-bg: rgba(241, 245, 249, 0.6);
+            --footer-bg: rgba(255, 255, 255, 0.9);
+            --hero-g1: rgba(22, 163, 74, 0.06);
+            --hero-g2: rgba(8, 145, 178, 0.04);
+            --hero-g3: rgba(124, 58, 237, 0.03);
+            --join-glow: rgba(22, 163, 74, 0.05);
+            --info-chip-bg: rgba(255, 255, 255, 0.8);
+            --version-tag-bg: rgba(100, 100, 120, 0.08);
+            --version-tag-border: rgba(100, 100, 120, 0.15);
+            --copy-btn-bg: rgba(22, 163, 74, 0.1);
+            --copy-btn-border: rgba(22, 163, 74, 0.25);
+            --particle-opacity: 0.5;
+            --tag-update-bg: rgba(22, 163, 74, 0.1);
+            --tag-event-bg: rgba(217, 119, 6, 0.1);
+            --tag-notice-bg: rgba(124, 58, 237, 0.1);
+            --tag-urgent-bg: rgba(220, 38, 38, 0.1);
+            --pinned-bg: rgba(217, 119, 6, 0.04);
+            --rule-icon-green: rgba(22, 163, 74, 0.1);
+            --rule-icon-gold: rgba(217, 119, 6, 0.1);
+            --rule-icon-diamond: rgba(8, 145, 178, 0.1);
+            --rule-icon-purple: rgba(124, 58, 237, 0.1);
+            --rule-icon-red: rgba(220, 38, 38, 0.1);
+            --rule-icon-cyan: rgba(6, 182, 212, 0.1);
+            --nav-link-hover-bg: rgba(22, 163, 74, 0.08);
+            --hero-badge-bg: rgba(22, 163, 74, 0.08);
+            --hero-badge-border: rgba(22, 163, 74, 0.25);
+            --checkbox-bg: rgba(241, 245, 249, 0.8);
+            --summary-divider: rgba(0, 0, 0, 0.04);
+            --scrollbar-thumb: rgba(22, 163, 74, 0.25);
+            --modal-overlay-bg: rgba(0, 0, 0, 0.4);
+            --logo-shadow: rgba(22, 163, 74, 0.2);
+            --toast-bg: rgba(255, 255, 255, 0.95);
+            --toast-border: rgba(22, 163, 74, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 15px;
+            line-height: 1.8;
+            background: var(--mc-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .mc-font {
+            font-family: 'Minecraft', 'Noto Sans SC', sans-serif;
+        }
+
+        /* ====== 按钮 ====== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.15s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            filter: brightness(0.95);
+        }
+
+        .btn-primary {
+            background: var(--mc-green);
+            color: #0f0f1a;
+            box-shadow: 0 2px 12px rgba(74, 222, 128, 0.25);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 20px rgba(74, 222, 128, 0.35);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--mc-green);
+            background: var(--nav-link-hover-bg);
+        }
+
+        .btn-confirm {
+            background: var(--mc-green);
+            color: #0f0f1a;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(74, 222, 128, 0.25);
+        }
+
+        .btn-confirm:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            filter: grayscale(0.5);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-confirm:not(:disabled):hover {
+            box-shadow: 0 4px 20px rgba(74, 222, 128, 0.35);
+        }
+
+        .btn-cancel {
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        /* ====== 背景粒子 ====== */
+        .bg-particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            opacity: var(--particle-opacity);
+            transition: opacity 0.3s ease;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--mc-green);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(100vh) rotate(0deg); }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { opacity: 0; transform: translateY(-10vh) rotate(720deg); }
+        }
+
+        /* ====== 导航栏 ====== */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: var(--navbar-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s ease;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .nav-brand .logo-icon {
+            width: 38px; height: 38px;
+            border-radius: 0;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px var(--logo-shadow);
+            image-rendering: pixelated;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            will-change: transform;
+        }
+
+        .nav-brand .logo-icon:active { cursor: grabbing; }
+
+        .nav-brand .logo-icon img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .nav-brand span {
+            font-family: 'Press Start 2P', 'Noto Sans SC', sans-serif;
+            color: var(--mc-green);
+            text-shadow: 0 0 10px var(--logo-shadow);
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            max-width: 400px;
+            cursor: pointer;
+            transition: font-size 0.3s ease, letter-spacing 0.3s ease, max-width 0.3s ease;
+        }
+
+        .nav-brand span.brand-full { font-size: 9px; letter-spacing: 1px; }
+        .nav-brand span.brand-short { font-size: 16px; letter-spacing: 2px; max-width: 120px; }
+
+        @keyframes brandSlideOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-16px); }
+        }
+        @keyframes brandSlideIn {
+            0% { opacity: 0; transform: translateY(16px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .brand-anim-out { animation: brandSlideOut 0.18s ease forwards; }
+        .brand-anim-in { animation: brandSlideIn 0.18s ease forwards; }
+
+        .nav-right { display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+
+        /* 汉堡菜单按钮 */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 36px; height: 36px;
+            background: transparent;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 6px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .hamburger:hover { border-color: var(--mc-green); background: var(--nav-link-hover-bg); }
+        .hamburger span {
+            display: block;
+            width: 18px; height: 2px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active { color: var(--mc-green); background: var(--nav-link-hover-bg); }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 50%;
+            transform: translateX(-50%);
+            width: 20px; height: 2px;
+            background: var(--mc-green);
+            border-radius: 2px;
+        }
+
+        /* ====== 主题切换开关 ====== */
+        .theme-toggle {
+            width: 50px; height: 28px;
+            background: rgba(30, 30, 60, 0.5);
+            border: 1px solid rgba(100, 100, 140, 0.25);
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--mc-green);
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.15);
+        }
+
+        .theme-toggle .toggle-stars {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            transition: opacity 0.5s ease;
+        }
+
+        .theme-toggle .toggle-stars span {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: rgba(200, 200, 255, 0.6);
+            border-radius: 50%;
+        }
+
+        .theme-toggle .toggle-stars span:nth-child(1) { top: 6px; left: 8px; }
+        .theme-toggle .toggle-stars span:nth-child(2) { top: 14px; left: 5px; }
+        .theme-toggle .toggle-stars span:nth-child(3) { top: 10px; left: 14px; }
+
+        .toggle-knob {
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 20px; height: 20px;
+            background: linear-gradient(135deg, #c4c4e0, #a0a0c0);
+            border-radius: 50%;
+            transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease, box-shadow 0.4s ease;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .toggle-knob.dragging { transition: none !important; }
+
+        .toggle-knob .moon {
+            position: absolute; font-size: 12px; line-height: 1;
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 1; transform: rotate(0deg) scale(1);
+        }
+
+        .toggle-knob .sun {
+            position: absolute; font-size: 12px; line-height: 1;
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0; transform: rotate(-180deg) scale(0);
+        }
+
+        [data-theme="light"] .theme-toggle { background: rgba(200, 230, 200, 0.5); border-color: rgba(22, 163, 74, 0.25); }
+        [data-theme="light"] .theme-toggle .toggle-stars { opacity: 0; }
+        [data-theme="light"] .toggle-knob { left: calc(100% - 23px); background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 1px 4px rgba(245, 158, 11, 0.4); }
+        [data-theme="light"] .toggle-knob .moon { opacity: 0; transform: rotate(180deg) scale(0); }
+        [data-theme="light"] .toggle-knob .sun { opacity: 1; transform: rotate(0deg) scale(1); }
+
+        .toggle-knob .sun.glow { filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6)); }
+        .toggle-knob .moon.glow { filter: drop-shadow(0 0 4px rgba(200, 200, 255, 0.6)); }
+
+        /* ====== 主题切换全局过渡 ====== */
+        html.theme-transition,
+        html.theme-transition *,
+        html.theme-transition *::before,
+        html.theme-transition *::after {
+            transition: background-color 0.5s ease, background 0.5s ease,
+                        border-color 0.5s ease, color 0.5s ease,
+                        box-shadow 0.5s ease, opacity 0.5s ease, fill 0.5s ease !important;
+        }
+
+        /* ====== 滚动定位偏移 & 高亮 ====== */
+        section[id] { scroll-margin-top: 80px; }
+
+        @keyframes sectionHighlight {
+            0% { box-shadow: inset 0 0 0 0 transparent; }
+            30% { box-shadow: inset 0 0 30px rgba(74, 222, 128, 0.08); }
+            100% { box-shadow: inset 0 0 0 0 transparent; }
+        }
+
+        .section-highlight { animation: sectionHighlight 1.2s ease; }
+
+        /* ====== Hero ====== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 2rem 80px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background:
+                radial-gradient(ellipse at 20% 50%, var(--hero-g1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, var(--hero-g2) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 0%, var(--hero-g3) 0%, transparent 40%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero .motd-img {
+            max-width: 100%; height: auto;
+            margin-bottom: 16px;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.15));
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--hero-badge-bg);
+            border: 1px solid var(--hero-badge-border);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--mc-green);
+            margin-bottom: 20px;
+        }
+
+        .hero-badge .dot {
+            width: 8px; height: 8px;
+            background: var(--mc-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+        }
+
+        .hero .subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 2;
+            margin-bottom: 28px;
+        }
+
+        .hero-info-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .info-chip {
+            background: var(--info-chip-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-chip .chip-icon { font-size: 20px; }
+        .info-chip .chip-label { font-size: 13px; color: var(--text-secondary); }
+        .info-chip .chip-value { font-size: 15px; font-weight: 700; color: var(--mc-green); }
+
+        .version-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 24px;
+            text-align: center;
+            margin: 0 auto 24px;
+            max-width: 300px;
+        }
+        .version-card .vc-range { font-size: 15px; font-weight: 600; color: var(--mc-green); margin-bottom: 6px; }
+        .version-card .vc-hint { font-size: 13px; color: var(--mc-gold); display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* ====== 通用区块 ====== */
+        .section {
+            position: relative;
+            z-index: 1;
+            padding: 60px 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header { text-align: center; margin-bottom: 40px; }
+        .section-header h2 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .section-header h2 .accent { color: var(--mc-green); }
+        .section-header p { color: var(--text-secondary); font-size: 14px; }
+
+        /* ====== 公告区 ====== */
+        .announcements {
+            background: var(--section-alt-bg);
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .announcement-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .announcement-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .announcement-card:hover {
+            border-color: var(--mc-green);
+            box-shadow: 0 2px 12px rgba(74, 222, 128, 0.08);
+        }
+
+        .announcement-card .tag {
+            flex-shrink: 0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .tag-update { background: var(--tag-update-bg); color: var(--mc-green); }
+        .tag-event { background: var(--tag-event-bg); color: var(--mc-gold); }
+        .tag-notice { background: var(--tag-notice-bg); color: var(--mc-purple); }
+        .tag-urgent { background: var(--tag-urgent-bg); color: var(--mc-redstone); }
+
+        .announcement-card .body { flex: 1; }
+        .announcement-card .body .title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .announcement-card .body .desc { font-size: 14px; color: var(--text-secondary); line-height: 1.8; }
+        .announcement-card .date { flex-shrink: 0; font-size: 13px; color: var(--text-secondary); white-space: nowrap; padding-top: 2px; }
+        .announcement-card.pinned { border-color: rgba(251, 191, 36, 0.5); background: var(--pinned-bg); }
+
+        /* ====== 规则区 ====== */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .rule-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .rule-card:hover {
+            border-color: var(--mc-green);
+            box-shadow: 0 2px 12px rgba(74, 222, 128, 0.08);
+        }
+
+        .rule-card .rule-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+        .rule-card .rule-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .rule-icon.green { background: var(--rule-icon-green); }
+        .rule-icon.gold { background: var(--rule-icon-gold); }
+        .rule-icon.diamond { background: var(--rule-icon-diamond); }
+        .rule-icon.purple { background: var(--rule-icon-purple); }
+        .rule-icon.red { background: var(--rule-icon-red); }
+        .rule-icon.cyan { background: var(--rule-icon-cyan); }
+        .rule-card .rule-title { font-size: 15px; font-weight: 600; }
+        .rule-card ul { list-style: none; padding: 0; }
+        .rule-card ul li { position: relative; padding: 4px 0 4px 18px; font-size: 14px; color: var(--text-secondary); line-height: 1.8; }
+        .rule-card ul li::before { content: '▸'; position: absolute; left: 0; color: var(--mc-green); font-size: 14px; top: 5px; }
+
+        /* ====== 快速加入 ====== */
+        .join-section { text-align: center; padding: 60px 2rem; position: relative; z-index: 1; }
+
+        .join-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at 50% 50%, var(--join-glow) 0%, transparent 60%);
+        }
+
+        .join-box { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+        .join-box h2 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .join-box p { color: var(--text-secondary); margin-bottom: 24px; font-size: 14px; }
+
+        .ip-copy {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .ip-copy:hover {
+            border-color: var(--mc-green);
+            box-shadow: 0 2px 12px rgba(74, 222, 128, 0.08);
+        }
+
+        .ip-copy .ip-text {
+            font-family: 'Minecraft', 'Noto Sans SC', sans-serif;
+            font-size: 13px;
+            color: var(--mc-green);
+            letter-spacing: 1px;
+        }
+
+        .ip-copy .copy-btn {
+            background: var(--copy-btn-bg);
+            border: 1px solid var(--copy-btn-border);
+            color: var(--mc-green);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Noto Sans SC', sans-serif;
+            transition: all 0.15s ease;
+        }
+
+        .ip-copy .copy-btn:hover { background: var(--mc-green); color: #0f0f1a; }
+        .ip-copy .copy-btn:active { transform: translateY(1px); }
+        .ip-copy .copy-btn.copied { background: var(--mc-green); color: #0f0f1a; }
+
+        .version-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: var(--version-tag-bg);
+            border: 1px solid var(--version-tag-border);
+        }
+
+        .version-tag.highlight { color: var(--mc-gold); background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.3); }
+
+        /* ====== 规则同意弹窗 ====== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--modal-overlay-bg);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 28px;
+            max-width: 520px;
+            width: 100%;
+            animation: modalIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.92) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-card .modal-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .modal-card .modal-rules {
+            background: var(--section-alt-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .modal-card .modal-rules h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            margin-top: 10px;
+            color: var(--text-primary);
+        }
+
+        .modal-card .modal-rules h4:first-child { margin-top: 0; }
+
+        .modal-card .modal-rules ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modal-card .modal-rules ul li {
+            position: relative;
+            padding: 2px 0 2px 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .modal-card .modal-rules ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--mc-green);
+            font-size: 12px;
+            top: 5px;
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px; height: 18px; min-width: 18px;
+            border: 2px solid var(--card-border);
+            border-radius: 4px;
+            background: var(--checkbox-bg);
+            cursor: pointer;
+            position: relative;
+            margin-top: 2px;
+            transition: all 0.15s ease;
+        }
+
+        .checkbox-row input[type="checkbox"]:checked {
+            background: var(--mc-green);
+            border-color: var(--mc-green-dark);
+        }
+
+        .checkbox-row input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px; font-weight: 700;
+            color: #0f0f1a;
+        }
+
+        .checkbox-row label {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.6;
+            cursor: pointer;
+        }
+
+        .checkbox-row label a { color: var(--mc-green); text-decoration: underline; text-underline-offset: 2px; }
+        .checkbox-row label a:hover { color: var(--mc-green-dark); }
+
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+        /* ====== Toast 通知 ====== */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: -400px;
+            z-index: 3000;
+            background: var(--toast-bg);
+            border: 1px solid var(--toast-border);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(12px);
+            transition: right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .toast.show { right: 20px; }
+
+        .toast .toast-icon { font-size: 20px; flex-shrink: 0; }
+        .toast .toast-text { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+
+        /* ====== 页脚 ====== */
+        .footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--card-border);
+            background: var(--footer-bg);
+            padding: 24px 2rem;
+            text-align: center;
+        }
+
+        .footer-copyright {
+            font-family: 'Press Start 2P', 'Noto Sans SC', sans-serif;
+            font-size: 10px;
+            color: var(--mc-stone);
+            letter-spacing: 0.5px;
+        }
+
+        /* ====== 滚动动画 ====== */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* ====== 导航栏用户区域 ====== */
+        .nav-user { display: flex; align-items: center; margin-right: 8px; }
+        .nav-login-btn {
+            font-size: 13px; padding: 6px 16px; border-radius: 8px;
+            background: transparent; color: var(--mc-green);
+            border: 1px solid var(--card-border); cursor: pointer;
+            font-family: 'Noto Sans SC', sans-serif; font-weight: 600;
+            transition: all 0.15s ease;
+        }
+        .nav-login-btn:hover { border-color: var(--mc-green); background: var(--nav-link-hover-bg); }
+        .nav-user-info { display: none; align-items: center; gap: 6px; position: relative; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
+        .nav-user-info:hover { background: var(--nav-link-hover-bg); }
+        .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--mc-green); color: #0f0f1a; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+        .user-name { font-size: 14px; font-weight: 600; color: var(--mc-green); max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-dropdown {
+            display: none; position: absolute; top: 100%; right: 0; padding-top: 8px;
+        }
+        .user-dropdown-inner {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 10px; padding: 6px 0; min-width: 150px; z-index: 1100;
+            backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .nav-user-info:hover .user-dropdown { display: block; }
+        .user-dropdown a { display: block; padding: 8px 16px; color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: all 0.15s; }
+        .user-dropdown a:hover { color: var(--mc-green); background: var(--nav-link-hover-bg); }
+        .user-dropdown .dropdown-divider { height: 1px; background: var(--card-border); margin: 4px 0; }
+
+        /* ====== 登录/注册弹窗 ====== */
+        .modal-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 1px solid var(--card-border); }
+        .modal-tab { flex: 1; padding: 10px; text-align: center; font-size: 14px; font-weight: 600; color: var(--text-secondary); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-family: 'Noto Sans SC', sans-serif; transition: all 0.2s; }
+        .modal-tab.active { color: var(--mc-green); border-bottom-color: var(--mc-green); }
+        .modal-tab:hover { color: var(--text-primary); }
+        .modal-tab-content { display: none; }
+        .modal-tab-content.active { display: block; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-group input[type="text"], .form-group input[type="password"], .form-group input[type="email"] {
+            width: 100%; padding: 10px 14px; background: var(--section-alt-bg); border: 1px solid var(--card-border);
+            border-radius: 8px; color: var(--text-primary); font-size: 14px; outline: none;
+            font-family: 'Noto Sans SC', sans-serif; transition: border-color 0.2s;
+        }
+        .form-group input:focus { border-color: var(--mc-green); }
+        .form-group input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+
+        .uuid-type-row { display: flex; gap: 16px; margin-top: 4px; }
+        .uuid-type-row label { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text-secondary); cursor: pointer; font-weight: 400; }
+        .uuid-type-row input[type="radio"] { accent-color: var(--mc-green); }
+
+        .error-msg { color: var(--mc-redstone); font-size: 13px; margin-top: 8px; display: none; text-align: center; }
+
+        .profile-info { margin-bottom: 16px; }
+        .profile-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--card-border); }
+        .profile-row:last-child { border-bottom: none; }
+        .profile-label { font-size: 14px; color: var(--text-secondary); }
+        .profile-value { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .whitelist-yes { color: var(--mc-green) !important; }
+        .whitelist-no { color: var(--mc-gold) !important; }
+        .banned-yes { color: var(--mc-redstone) !important; }
+        .banned-no { color: var(--mc-green) !important; }
+
+        /* ====== 实时服务器状态 ====== */
+        .live-status-bar {
+            display: flex; align-items: center; justify-content: center; gap: 20px;
+            flex-wrap: wrap; margin-bottom: 10px;
+        }
+        .live-stat {
+            display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary);
+        }
+        .live-stat .stat-icon { font-size: 16px; }
+        .live-stat .stat-value { font-weight: 700; color: var(--mc-green); }
+        .live-stat .stat-value.offline { color: var(--mc-redstone); }
+        .tps-bar { display: inline-flex; gap: 2px; align-items: center; }
+        .tps-segment { width: 6px; height: 14px; border-radius: 2px; background: var(--mc-green); transition: background 0.3s; }
+        .tps-segment.warn { background: var(--mc-gold); }
+        .tps-segment.bad { background: var(--mc-redstone); }
+        .online-players-list {
+            display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+            margin-top: 8px; max-width: 500px; margin-left: auto; margin-right: auto;
+        }
+        .online-player-chip {
+            background: var(--info-chip-bg); border: 1px solid var(--card-border);
+            border-radius: 8px; padding: 3px 10px; font-size: 12px; color: var(--mc-green);
+            font-weight: 600; display: flex; align-items: center; gap: 4px;
+        }
+        .online-player-chip .player-head {
+            width: 16px; height: 16px; image-rendering: pixelated;
+        }
+        .last-update { font-size: 11px; color: var(--mc-stone); margin-top: 4px; }
+
+        /* ====== 响应式 ====== */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 1rem; }
+            .nav-brand span { font-size: 7px !important; max-width: 160px; }
+            .nav-brand span.brand-short { font-size: 14px !important; max-width: 100px; }
+            .hamburger { display: flex; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 64px; left: 0; right: 0;
+                background: var(--navbar-bg);
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--card-border);
+                flex-direction: column;
+                padding: 8px;
+                gap: 2px;
+                z-index: 999;
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a {
+                padding: 10px 16px;
+                font-size: 14px;
+                width: 100%;
+                border-radius: 8px;
+                text-align: center;
+            }
+            .nav-links a.active::after { display: none; }
+            .hero .motd-img { max-width: 95%; }
+            .hero-actions { flex-direction: column; }
+            .hero-info-bar { flex-direction: column; gap: 10px; }
+            .announcement-card { flex-direction: column; gap: 10px; }
+            .announcement-card .date { align-self: flex-end; }
+            .rules-grid { grid-template-columns: 1fr; }
+            .ip-copy { flex-direction: column; gap: 8px; }
+            .ip-copy .ip-text { font-size: 11px; }
+            .version-card { max-width: 260px; }
+            .modal-card { padding: 20px; }
+            .toast { right: -400px; }
+            .toast.show { right: 10px; left: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 背景粒子 -->
+<div class="bg-particles" id="particles"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="nav-brand" id="navBrand">
+        <div class="logo-icon" id="logoIcon"><img src="icon.png" alt="MSMP"></div>
+        <span class="brand-full" id="brandText">Mcking&Mitch Survival Multiplayer</span>
+    </div>
+    <div class="nav-right">
+        <button class="hamburger" id="hamburgerBtn" aria-label="菜单">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#top" class="active">主页</a></li>
+            <li><a href="/news.html">新闻</a></li>
+            <li><a href="#" onclick="showToast('🚧','该功能还在开发中');return false">论坛</a></li>
+        </ul>
+        <div class="nav-user" id="navUser">
+            <button class="nav-login-btn" id="navLoginBtn" onclick="openPlayerModal('login')">登录</button>
+            <div class="nav-user-info" id="navUserInfo">
+                <div class="user-avatar" id="userAvatar"></div>
+                <span class="user-name" id="userName"></span>
+                <div class="user-dropdown">
+                    <div class="user-dropdown-inner">
+                    <a href="#" onclick="openPlayerModal('profile');return false">个人资料</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" onclick="confirmLogout();return false">退出登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="theme-toggle" id="themeToggle" title="切换主题">
+            <div class="toggle-stars"><span></span><span></span><span></span></div>
+            <div class="toggle-knob">
+                <span class="moon">🌙</span>
+                <span class="sun">☀️</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="top">
+    <div class="hero-content">
+        <img id="motdImage" src="motd.png" alt="MSMP" class="motd-img">
+        <div class="hero-badge" id="statusBadge">
+            <span class="dot" id="statusDot"></span>
+            <span id="statusText">服务器在线运行中</span>
+        </div>
+        <p class="subtitle" id="subtitleText">一个充满创造与冒险的 Minecraft 世界<br>与志同道合的玩家一起探索、建造、生存</p>
+
+        <!-- 在线人数 & 实时状态 -->
+        <div class="hero-info-bar">
+            <div class="info-chip">
+                <span class="chip-icon">🟢</span>
+                <div>
+                    <div class="chip-label">在线玩家</div>
+                    <div class="chip-value" id="onlineCount">--</div>
+                </div>
+            </div>
+            <div class="info-chip" id="tpsChip" style="display:none">
+                <span class="chip-icon">⚡</span>
+                <div>
+                    <div class="chip-label">TPS</div>
+                    <div class="chip-value" id="tpsValue">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 实时状态栏 -->
+        <div id="liveStatusBar" style="display:none; margin-bottom: 16px;">
+            <div class="live-status-bar">
+                <div class="live-stat">
+                    <span class="stat-icon">📊</span>
+                    <span>TPS:</span>
+                    <span class="stat-value" id="tps1m">--</span>
+                    <div class="tps-bar" id="tpsBar"></div>
+                </div>
+                <div class="live-stat">
+                    <span class="stat-icon">👥</span>
+                    <span>在线:</span>
+                    <span class="stat-value" id="liveOnlineCount">--</span>
+                </div>
+                <div class="live-stat">
+                    <span class="stat-icon">🖥️</span>
+                    <span>版本:</span>
+                    <span class="stat-value" id="liveVersion">--</span>
+                </div>
+            </div>
+            <div class="online-players-list" id="onlinePlayersList"></div>
+            <div class="last-update" id="lastUpdateTime"></div>
+        </div>
+
+        <!-- 版本信息 -->
+        <div class="version-card fade-in">
+            <div class="vc-range" id="versionRange">1.9 — 1.26</div>
+            <div class="vc-hint" id="versionHint">⭐ 建议使用 1.21.11 以获得最佳体验</div>
+        </div>
+
+        <div class="hero-actions">
+            <a href="#join" class="btn btn-primary">🎮 立即加入</a>
+            <a href="#rules" class="btn btn-secondary">📖 查看规则</a>
+        </div>
+    </div>
+</section>
+
+<!-- 公告区 -->
+<section class="announcements section" id="announcements">
+    <div class="section-header fade-in">
+        <h2>📢 服务器 <span class="accent">公告</span></h2>
+        <p>了解最新的服务器动态与重要通知</p>
+    </div>
+    <div class="announcement-list" id="announcementList">
+        <!-- 动态渲染 -->
+    </div>
+</section>
+
+<!-- 服务器规则 -->
+<section class="section" id="rules">
+    <div class="section-header fade-in">
+        <h2>📜 服务器 <span class="accent">规则</span></h2>
+        <p>请所有玩家遵守以下规则，共同维护良好的游戏环境</p>
+    </div>
+    <div class="rules-grid" id="rulesGrid">
+        <!-- 动态渲染 -->
+    </div>
+</section>
+
+<!-- 快速加入 -->
+<section class="join-section" id="join">
+    <div class="join-box fade-in">
+        <h2>🚀 立即加入游戏</h2>
+        <p>同意服务器规则后，复制服务器地址即可开始冒险</p>
+        <div class="ip-copy" id="ipCopy" onclick="handleCopyClick()">
+            <span class="ip-text" id="ipText">msmp.mplusm.site</span>
+            <button class="copy-btn" id="copyBtn">复制</button>
+        </div>
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;" id="versionTags">
+            <span class="version-tag">🎮 Java 版</span>
+            <span class="version-tag highlight" id="tagRecommend">⭐ 推荐 1.21.11</span>
+            <span class="version-tag" id="tagSupport">🔌 支持 1.9-1.26</span>
+        </div>
+    </div>
+</section>
+
+<!-- 规则同意弹窗 -->
+<div class="modal-overlay" id="rulesModal">
+    <div class="modal-card">
+        <h3>📜 服务器规则</h3>
+        <p class="modal-desc">在复制服务器地址前，请认真阅读以下核心规则：</p>
+        <div class="modal-rules" id="modalRulesContent">
+            <!-- 动态渲染 -->
+        </div>
+        <div class="checkbox-row">
+            <input type="checkbox" id="agreeCheckbox" onchange="toggleConfirmBtn()">
+            <label for="agreeCheckbox">我已阅读并同意遵守 <a href="#rules" onclick="closeModal()">服务器规则</a>，违反规则将接受相应处罚</label>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-confirm" id="confirmBtn" disabled onclick="agreeAndCopy()">同意并复制地址</button>
+        </div>
+    </div>
+</div>
+
+<!-- 玩家登录/注册/资料弹窗 -->
+<div class="modal-overlay" id="playerModal">
+    <div class="modal-card">
+        <div class="modal-tabs" id="playerModalTabs">
+            <button class="modal-tab active" data-tab="login" onclick="switchPlayerTab('login')">登录</button>
+            <button class="modal-tab" data-tab="register" onclick="switchPlayerTab('register')">注册</button>
+            <button class="modal-tab" data-tab="profile" onclick="switchPlayerTab('profile')">个人资料</button>
+        </div>
+
+        <!-- 登录表单 -->
+        <div class="modal-tab-content active" id="tab-login">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="loginUsername" placeholder="输入用户名" autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="loginPassword" placeholder="输入密码" autocomplete="current-password">
+            </div>
+            <div class="error-msg" id="loginError"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="handlePlayerLogin()">登录</button>
+        </div>
+
+        <!-- 注册表单 -->
+        <div class="modal-tab-content" id="tab-register">
+            <div class="form-group">
+                <label>用户名 *</label>
+                <input type="text" id="regUsername" placeholder="3-20个字符" autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>密码 *</label>
+                <input type="password" id="regPassword" placeholder="至少6位" autocomplete="new-password">
+            </div>
+            <div class="form-group">
+                <label>Minecraft 用户名 *</label>
+                <input type="text" id="regMcUsername" placeholder="游戏内显示的名称">
+            </div>
+            <div class="form-group">
+                <label>账号类型</label>
+                <div class="uuid-type-row">
+                    <label><input type="radio" name="uuidType" value="offline" checked> 离线模式</label>
+                    <label><input type="radio" name="uuidType" value="online"> 正版在线</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>邮箱（选填）</label>
+                <input type="email" id="regEmail" placeholder="用于找回密码" autocomplete="email">
+            </div>
+            <div class="error-msg" id="regError"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="handlePlayerRegister()">注册并加入白名单</button>
+        </div>
+
+        <!-- 个人资料 -->
+        <div class="modal-tab-content" id="tab-profile">
+            <div class="profile-info">
+                <div class="profile-row"><span class="profile-label">用户名</span><span class="profile-value" id="profileUsername"></span></div>
+                <div class="profile-row"><span class="profile-label">MC 用户名</span><span class="profile-value" id="profileMcName"></span></div>
+                <div class="profile-row"><span class="profile-label">UUID</span><span class="profile-value" id="profileUUID" style="font-size:11px;word-break:break-all"></span></div>
+                <div class="profile-row"><span class="profile-label">账号类型</span><span class="profile-value" id="profileUUIDType"></span></div>
+                <div class="profile-row"><span class="profile-label">白名单</span><span class="profile-value" id="profileWhitelist"></span></div>
+                <div class="profile-row"><span class="profile-label">账号状态</span><span class="profile-value" id="profileBanned"></span></div>
+                <div class="profile-row"><span class="profile-label">注册时间</span><span class="profile-value" id="profileRegDate"></span></div>
+            </div>
+            <button class="btn btn-cancel" style="width:100%" onclick="confirmLogout()">退出登录</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast 通知 -->
+<div class="toast" id="toast">
+    <span class="toast-icon" id="toastIcon">📋</span>
+    <span class="toast-text" id="toastText">服务器地址已复制到剪贴板</span>
+</div>
+
+<!-- 页脚 -->
+<footer class="footer">
+    <div class="footer-copyright">© 2025-2026 MSMP. Not affiliated with Mojang Studios.</div>
+</footer>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.4/purify.min.js"></script>
+    <script>
+    // ====== 全局内容数据 ======
+    let siteContent = null;
+
+    // ====== 动态渲染函数 ======
+    function renderContent(data) {
+        siteContent = data;
+        const info = data.serverInfo;
+
+        // 服务器状态
+        const statusBadge = document.getElementById('statusBadge');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        if (info.online) {
+            statusText.textContent = '服务器在线运行中';
+            statusDot.style.background = 'var(--mc-green)';
+            statusDot.style.animation = 'pulse 2s ease-in-out infinite';
+        } else {
+            statusText.textContent = '服务器离线';
+            statusDot.style.background = 'var(--mc-redstone)';
+            statusDot.style.animation = 'none';
+        }
+
+        // 副标题
+        document.getElementById('subtitleText').innerHTML = info.subtitle.replace(/\n/g, '<br>');
+
+        // 版本信息
+        document.getElementById('versionRange').textContent = info.versionRange;
+        document.getElementById('versionHint').textContent = '⭐ 建议使用 ' + info.recommendVersion + ' 以获得最佳体验';
+
+        // IP 地址
+        document.getElementById('ipText').textContent = info.ip;
+
+        // 版本标签
+        document.getElementById('tagRecommend').textContent = '⭐ 推荐 ' + info.recommendVersion;
+        document.getElementById('tagSupport').textContent = '🔌 支持 ' + info.versionRange;
+
+        // MOTD 图片
+        if (info.motdImage) {
+            document.getElementById('motdImage').src = info.motdImage;
+        }
+
+        // 渲染公告
+        renderAnnouncements(data.announcements);
+
+        // 渲染规则
+        renderRules(data.rules);
+
+        // 更新弹窗规则
+        renderModalRules(data.rules);
+
+        // 重新初始化滚动动画
+        document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
+    }
+
+    function renderAnnouncements(announcements) {
+        const list = document.getElementById('announcementList');
+        list.innerHTML = announcements.map(a => `
+            <div class="announcement-card${a.pinned ? ' pinned' : ''} fade-in${a.newsId ? ' has-news-link' : ''}" ${a.newsId ? `onclick="window.open('/news.html#news-'+${a.newsId},'_blank')" style="cursor:pointer"` : ''}>
+                <span class="tag tag-${a.tag}">${a.tagLabel}</span>
+                <div class="body">
+                    <div class="title">${a.title}${a.newsId ? ' <span style="font-size:11px;color:var(--mc-green);font-weight:400">查看详情 →</span>' : ''}</div>
+                    <div class="desc">${a.desc}</div>
+                </div>
+                <div class="date">${a.date}</div>
+            </div>
+        `).join('');
+    }
+
+    function renderRules(rules) {
+        const grid = document.getElementById('rulesGrid');
+        grid.innerHTML = rules.map(r => `
+            <div class="rule-card fade-in">
+                <div class="rule-header">
+                    <div class="rule-icon ${r.iconColor}">${r.icon}</div>
+                    <div class="rule-title">${r.title}</div>
+                </div>
+                <ul>
+                    ${r.items.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            </div>
+        `).join('');
+    }
+
+    function renderModalRules(rules) {
+        const container = document.getElementById('modalRulesContent');
+        container.innerHTML = rules.map((r, i) => `
+            <h4>${r.icon} ${r.title}</h4>
+            <ul>
+                ${r.items.map(item => `<li>${item}</li>`).join('')}
+            </ul>
+        `).join('');
+    }
+
+    // ====== 主题切换（拖拽滑动） ======
+    (function initTheme() {
+        const saved = localStorage.getItem('msmp-theme');
+        if (saved) {
+            document.documentElement.setAttribute('data-theme', saved);
+        } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    })();
+
+    (function initToggleDrag() {
+        const toggle = document.getElementById('themeToggle');
+        const knob = toggle.querySelector('.toggle-knob');
+        const html = document.documentElement;
+        let dragging = false, hasMoved = false, startX = 0, knobStartLeft = 0;
+        const MIN_LEFT = 3, MAX_LEFT = 27, MOVE_THRESHOLD = 3;
+
+        function applyTheme(next) {
+            html.classList.add('theme-transition');
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('msmp-theme', next);
+            const moon = knob.querySelector('.moon'), sun = knob.querySelector('.sun');
+            if (next === 'light') { sun.classList.add('glow'); setTimeout(() => sun.classList.remove('glow'), 600); }
+            else { moon.classList.add('glow'); setTimeout(() => moon.classList.remove('glow'), 600); }
+            setTimeout(() => html.classList.remove('theme-transition'), 600);
+        }
+
+        function getKnobLeft() { return html.getAttribute('data-theme') === 'light' ? MAX_LEFT : MIN_LEFT; }
+
+        function onPointerDown(e) {
+            e.preventDefault(); dragging = true; hasMoved = false;
+            knob.classList.add('dragging');
+            startX = e.touches ? e.touches[0].clientX : e.clientX;
+            knobStartLeft = getKnobLeft();
+            knob.style.left = knobStartLeft + 'px';
+        }
+
+        function onPointerMove(e) {
+            if (!dragging) return; e.preventDefault();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            if (Math.abs(clientX - startX) > MOVE_THRESHOLD) hasMoved = true;
+            let newLeft = knobStartLeft + (clientX - startX);
+            knob.style.left = Math.max(MIN_LEFT, Math.min(MAX_LEFT, newLeft)) + 'px';
+        }
+
+        function onPointerUp(e) {
+            if (!dragging) return; dragging = false; knob.classList.remove('dragging');
+            if (!hasMoved) { knob.style.left = ''; applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); return; }
+            const next = parseFloat(knob.style.left) > (MIN_LEFT + MAX_LEFT) / 2 ? 'light' : 'dark';
+            knob.style.left = ''; applyTheme(next);
+        }
+
+        toggle.addEventListener('mousedown', onPointerDown);
+        document.addEventListener('mousemove', onPointerMove);
+        document.addEventListener('mouseup', onPointerUp);
+        toggle.addEventListener('touchstart', onPointerDown, { passive: false });
+        document.addEventListener('touchmove', onPointerMove, { passive: false });
+        document.addEventListener('touchend', onPointerUp);
+    })();
+
+    // ====== 导航品牌切换 ======
+    const brandText = document.getElementById('brandText');
+    let brandShowFull = true, brandAnimating = false;
+
+    document.getElementById('navBrand').addEventListener('click', function(e) {
+        if (e.target.closest('.logo-icon')) return;
+        if (brandAnimating) return; brandAnimating = true;
+        brandText.classList.add('brand-anim-out');
+        setTimeout(() => {
+            if (brandShowFull) { brandText.textContent = 'MSMP'; brandText.classList.remove('brand-full'); brandText.classList.add('brand-short'); }
+            else { brandText.textContent = siteContent ? siteContent.serverInfo.fullName : 'Mcking&Mitch Survival Multiplayer'; brandText.classList.remove('brand-short'); brandText.classList.add('brand-full'); }
+            brandShowFull = !brandShowFull;
+            brandText.classList.remove('brand-anim-out'); brandText.classList.add('brand-anim-in');
+            setTimeout(() => { brandText.classList.remove('brand-anim-in'); brandAnimating = false; }, 200);
+        }, 200);
+    });
+
+    // ====== Logo 长按旋转 + 惯性 ======
+    (function initLogoSpin() {
+        const logoIcon = document.getElementById('logoIcon');
+        let isHolding = false, rotation = 0, velocity = 0, spinRAF = null, holdTimer = null, lastTime = 0;
+        const ACCELERATION = 0.8, MAX_SPEED = 30, FRICTION = 0.97;
+
+        function spinLoop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const dt = Math.min(timestamp - lastTime, 32); lastTime = timestamp;
+            if (isHolding) { velocity = Math.min(velocity + ACCELERATION * (dt / 16), MAX_SPEED); }
+            else { velocity *= FRICTION; if (velocity < 0.1) { velocity = 0; logoIcon.style.transform = 'rotate(' + rotation + 'deg)'; spinRAF = null; return; } }
+            rotation += velocity * (dt / 16); if (rotation >= 360) rotation -= 360;
+            logoIcon.style.transform = 'rotate(' + rotation + 'deg)';
+            spinRAF = requestAnimationFrame(spinLoop);
+        }
+
+        function startSpin(e) { e.preventDefault(); e.stopPropagation(); isHolding = true; lastTime = 0; holdTimer = setTimeout(() => { if (isHolding && !spinRAF) spinRAF = requestAnimationFrame(spinLoop); }, 150); }
+        function stopSpin() { clearTimeout(holdTimer); isHolding = false; }
+        function cancelSpin() { clearTimeout(holdTimer); isHolding = false; velocity = 0; if (spinRAF) { cancelAnimationFrame(spinRAF); spinRAF = null; } logoIcon.style.transform = 'rotate(' + rotation + 'deg)'; }
+
+        logoIcon.addEventListener('mousedown', startSpin);
+        document.addEventListener('mouseup', stopSpin);
+        logoIcon.addEventListener('touchstart', startSpin, { passive: false });
+        document.addEventListener('touchend', stopSpin);
+        document.addEventListener('touchcancel', cancelSpin);
+        window.addEventListener('blur', cancelSpin);
+    })();
+
+    // ====== 背景粒子 ======
+    (function createParticles() {
+        const container = document.getElementById('particles');
+        const colors = ['#4ade80', '#22d3ee', '#a78bfa', '#fbbf24'];
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.style.left = Math.random() * 100 + '%';
+            p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.animationDuration = (8 + Math.random() * 15) + 's';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            container.appendChild(p);
+        }
+    })();
+
+    // ====== 滚动动画 ======
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ====== 在线人数（实时数据） ======
+    let serverOnline = false;
+    let lastServerStatus = null;
+
+    function updateOnlineCount(maxPlayers) {
+        const max = maxPlayers || (siteContent ? siteContent.serverInfo.maxPlayers : 50);
+        if (!serverOnline) {
+            document.getElementById('onlineCount').textContent = '离线';
+            return;
+        }
+        const onlinePlayers = lastServerStatus ? lastServerStatus.onlinePlayers : [];
+        document.getElementById('onlineCount').textContent = onlinePlayers.length + ' / ' + max;
+    }
+
+    function updateServerStatusUI(status) {
+        if (!status) return;
+        lastServerStatus = status;
+        serverOnline = status.online;
+
+        const statusBadge = document.getElementById('statusBadge');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+
+        if (status.online) {
+            statusText.textContent = '服务器在线运行中';
+            statusDot.style.background = 'var(--mc-green)';
+            statusDot.style.animation = 'pulse 2s ease-in-out infinite';
+        } else {
+            statusText.textContent = '服务器离线';
+            statusDot.style.background = 'var(--mc-redstone)';
+            statusDot.style.animation = 'none';
+        }
+
+        // 在线人数
+        updateOnlineCount(status.maxPlayers);
+
+        // 实时状态栏
+        const liveBar = document.getElementById('liveStatusBar');
+        const tpsChip = document.getElementById('tpsChip');
+
+        if (status.online && status.tps && status.tps.length > 0) {
+            liveBar.style.display = 'block';
+            tpsChip.style.display = 'flex';
+
+            const tps1 = status.tps[0];
+            document.getElementById('tps1m').textContent = tps1.toFixed(1);
+            document.getElementById('tps1m').className = 'stat-value' + (tps1 < 15 ? ' offline' : '');
+            document.getElementById('tpsValue').textContent = tps1.toFixed(1);
+            document.getElementById('tpsValue').className = 'chip-value' + (tps1 < 15 ? ' offline' : '');
+            document.getElementById('liveOnlineCount').textContent = (status.onlinePlayers ? status.onlinePlayers.length : 0) + ' / ' + status.maxPlayers;
+            document.getElementById('liveVersion').textContent = status.serverVersion ? status.serverVersion.split(' ')[0] : '--';
+
+            // TPS 可视化条
+            const tpsBar = document.getElementById('tpsBar');
+            tpsBar.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                const seg = document.createElement('div');
+                seg.className = 'tps-segment';
+                const threshold = 20 - i * 2;
+                if (tps1 >= threshold) seg.classList.add('');
+                else if (tps1 >= threshold - 4) seg.classList.add('warn');
+                else seg.classList.add('bad');
+                tpsBar.appendChild(seg);
+            }
+
+            // 在线玩家列表
+            const playersList = document.getElementById('onlinePlayersList');
+            if (status.onlinePlayers && status.onlinePlayers.length > 0) {
+                playersList.innerHTML = status.onlinePlayers.map(p => {
+                    const name = typeof p === 'string' ? p : p.name;
+                    const pUuid = typeof p === 'string' ? '' : (p.uuid || '');
+                    const headUrl = pUuid ? 'https://mc-heads.net/avatar/' + pUuid + '/16' : 'https://mc-heads.net/avatar/' + name + '/16';
+                    return '<div class="online-player-chip"><img class="player-head" src="' + headUrl + '" alt="" onerror="this.style.display=\'none\'">' + name + '</div>';
+                }).join('');
+            } else {
+                playersList.innerHTML = '<span style="font-size:12px;color:var(--text-secondary)">暂无玩家在线</span>';
+            }
+
+            // 最后更新时间
+            if (status.lastUpdate) {
+                const dt = new Date(status.lastUpdate);
+                document.getElementById('lastUpdateTime').textContent = '最后更新: ' + dt.toLocaleTimeString('zh-CN');
+            }
+        } else {
+            liveBar.style.display = 'none';
+            tpsChip.style.display = 'none';
+        }
+    }
+
+    // 加载实时服务器状态
+    function fetchServerStatus() {
+        fetch('/api/server-status')
+            .then(r => r.json())
+            .then(data => updateServerStatusUI(data))
+            .catch(err => console.log('Server status fetch failed:', err));
+    }
+
+    // 定时刷新服务器状态
+    setInterval(fetchServerStatus, 15000);
+    fetchServerStatus();
+
+    // ====== 汉堡菜单逻辑 ======
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburgerBtn.addEventListener('click', function() {
+        hamburgerBtn.classList.toggle('active');
+        navLinks.classList.toggle('open');
+    });
+
+    // 点击导航链接后关闭菜单
+    navLinks.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            hamburgerBtn.classList.remove('active');
+            navLinks.classList.remove('open');
+        });
+    });
+
+    // 点击页面其他区域关闭菜单
+    document.addEventListener('click', function(e) {
+        if (!hamburgerBtn.contains(e.target) && !navLinks.contains(e.target)) {
+            hamburgerBtn.classList.remove('active');
+            navLinks.classList.remove('open');
+        }
+    });
+
+    // ====== 规则同意弹窗逻辑 ======
+    function handleCopyClick() { openModal(); }
+
+    function openModal() {
+        document.getElementById('rulesModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('agreeCheckbox').checked = false;
+        document.getElementById('confirmBtn').disabled = true;
+    }
+
+    function closeModal() {
+        document.getElementById('rulesModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function toggleConfirmBtn() {
+        document.getElementById('confirmBtn').disabled = !document.getElementById('agreeCheckbox').checked;
+    }
+
+    function agreeAndCopy() { closeModal(); copyIP(); }
+
+    document.getElementById('rulesModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+    // ====== Toast 通知 ======
+    function showToast(icon, text) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastIcon').textContent = icon;
+        document.getElementById('toastText').textContent = text;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // ====== 复制 IP ======
+    function copyIP() {
+        const ip = siteContent ? siteContent.serverInfo.ip : 'msmp.mplusm.site';
+        navigator.clipboard.writeText(ip).then(() => {
+            showToast('📋', '服务器地址已复制到剪贴板');
+        }).catch(() => {
+            const textarea = document.createElement('textarea');
+            textarea.value = ip;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('📋', '服务器地址已复制到剪贴板');
+        });
+    }
+
+    // ====== 平滑滚动 + 区域高亮 ======
+    function scrollToSection(targetId) {
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        const navbarHeight = 64;
+        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 16;
+        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+        const scrollDone = setInterval(() => {
+            if (Math.abs(target.getBoundingClientRect().top - navbarHeight - 16) < 5) {
+                clearInterval(scrollDone);
+                target.classList.add('section-highlight');
+                setTimeout(() => target.classList.remove('section-highlight'), 1200);
+            }
+        }, 50);
+        setTimeout(() => {
+            clearInterval(scrollDone);
+            if (!target.classList.contains('section-highlight')) {
+                target.classList.add('section-highlight');
+                setTimeout(() => target.classList.remove('section-highlight'), 1200);
+            }
+        }, 1500);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            if (targetId === 'top') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+            scrollToSection(targetId);
+        });
+    });
+
+    // ====== 初始化：从 API 加载内容 ======
+    fetch('/api/content')
+        .then(r => r.json())
+        .then(data => renderContent(data))
+        .catch(err => console.error('加载内容失败:', err));
+
+    // ====== Socket.io 实时更新 ======
+    const socket = io();
+    socket.on('content-update', function(data) {
+        renderContent(data);
+    });
+
+    // 插件推送的服务器状态更新
+    socket.on('server-status-update', function(data) {
+        updateServerStatusUI(data);
+    });
+
+    // 插件推送的玩家事件
+    socket.on('player-event', function(data) {
+        if (data.event === 'join') {
+            showToast('🎮', data.playerName + ' 加入了服务器');
+        } else if (data.event === 'leave') {
+            showToast('👋', data.playerName + ' 离开了服务器');
+        }
+        // 刷新服务器状态
+        fetchServerStatus();
+    });
+
+    // ====== 玩家登录系统 ======
+    let currentPlayer = null;
+
+    async function checkPlayerAuth() {
+        try {
+            const res = await fetch('/api/player/check');
+            const data = await res.json();
+            if (data.authenticated) {
+                currentPlayer = data.player;
+                updateNavUser();
+            }
+        } catch(e) {}
+    }
+
+    function updateNavUser() {
+        const loginBtn = document.getElementById('navLoginBtn');
+        const userInfo = document.getElementById('navUserInfo');
+        if (currentPlayer) {
+            loginBtn.style.display = 'none';
+            userInfo.style.display = 'flex';
+            document.getElementById('userName').textContent = currentPlayer.username;
+            document.getElementById('userAvatar').textContent = currentPlayer.username.charAt(0).toUpperCase();
+        } else {
+            loginBtn.style.display = '';
+            userInfo.style.display = 'none';
+        }
+    }
+
+    function openPlayerModal(tab) {
+        document.getElementById('playerModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        if (tab) switchPlayerTab(tab);
+    }
+
+    function closePlayerModal() {
+        document.getElementById('playerModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function switchPlayerTab(tab) {
+        document.querySelectorAll('#playerModal .modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+        document.querySelectorAll('#playerModal .modal-tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
+        // 切换到资料页时更新数据
+        if (tab === 'profile' && currentPlayer) updateProfileView();
+    }
+
+    function updateProfileView() {
+        if (!currentPlayer) return;
+        document.getElementById('profileUsername').textContent = currentPlayer.username;
+        document.getElementById('profileMcName').textContent = currentPlayer.mcUsername;
+        document.getElementById('profileUUID').textContent = currentPlayer.mcUUID || '未知';
+        document.getElementById('profileUUIDType').textContent = currentPlayer.mcUUIDType === 'online' ? '正版在线' : '离线模式';
+        const wlEl = document.getElementById('profileWhitelist');
+        wlEl.textContent = currentPlayer.whitelisted ? '已加入' : '未加入';
+        wlEl.className = 'profile-value ' + (currentPlayer.whitelisted ? 'whitelist-yes' : 'whitelist-no');
+        const banEl = document.getElementById('profileBanned');
+        banEl.textContent = currentPlayer.banned ? '已封禁' : '正常';
+        banEl.className = 'profile-value ' + (currentPlayer.banned ? 'banned-yes' : 'banned-no');
+        document.getElementById('profileRegDate').textContent = currentPlayer.registeredAt ? new Date(currentPlayer.registeredAt).toLocaleDateString('zh-CN') : '未知';
+    }
+
+    async function handlePlayerLogin() {
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const errorEl = document.getElementById('loginError');
+        errorEl.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/player/login', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                currentPlayer = data.player;
+                updateNavUser();
+                closePlayerModal();
+                showToast('✅', '登录成功，欢迎 ' + currentPlayer.username);
+            } else {
+                errorEl.textContent = data.error;
+                errorEl.style.display = 'block';
+            }
+        } catch(e) {
+            errorEl.textContent = '登录失败，请重试';
+            errorEl.style.display = 'block';
+        }
+    }
+
+    async function handlePlayerRegister() {
+        const username = document.getElementById('regUsername').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const mcUsername = document.getElementById('regMcUsername').value.trim();
+        const mcUUIDType = document.querySelector('input[name="uuidType"]:checked').value;
+        const email = document.getElementById('regEmail').value.trim();
+        const errorEl = document.getElementById('regError');
+        errorEl.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/player/register', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username, password, mcUsername, mcUUIDType, email })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                currentPlayer = data.player;
+                updateNavUser();
+                closePlayerModal();
+                showToast('✅', '注册成功，欢迎 ' + currentPlayer.username + '！已自动加入白名单');
+            } else {
+                errorEl.textContent = data.error;
+                errorEl.style.display = 'block';
+            }
+        } catch(e) {
+            errorEl.textContent = '注册失败，请重试';
+            errorEl.style.display = 'block';
+        }
+    }
+
+    async function playerLogout() {
+        await fetch('/api/player/logout', { method: 'POST' });
+        currentPlayer = null;
+        updateNavUser();
+        closePlayerModal();
+        showToast('👋', '已退出登录');
+    }
+
+    function confirmLogout() {
+        if (confirm('确定要退出登录吗？')) {
+            playerLogout();
+        }
+    }
+
+    // 弹窗点击外部关闭
+    document.getElementById('playerModal').addEventListener('click', function(e) { if (e.target === this) closePlayerModal(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closePlayerModal(); closeModal(); } });
+
+    // 页面加载时检查登录状态
+    checkPlayerAuth();
+</script>
+
+</body>
+</html>
