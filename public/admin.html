@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSMP 管理面板</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('Minecraft_Next_Font_12px.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root, [data-theme="dark"] {
+            --bg: #1a1a2e; --bg-card: rgba(30,30,50,0.9); --bg-input: rgba(20,20,40,0.8);
+            --border: rgba(74,222,128,0.2); --border-focus: rgba(74,222,128,0.5);
+            --text: #f1f5f9; --text-dim: #94a3b8; --text-muted: #64748b;
+            --green: #4ade80; --green-dark: #22c55e; --gold: #fbbf24;
+            --red: #ef4444; --purple: #a78bfa; --diamond: #22d3ee;
+            --tag-update-bg: rgba(74,222,128,0.15); --tag-event-bg: rgba(251,191,36,0.15);
+            --tag-notice-bg: rgba(167,139,250,0.15); --tag-urgent-bg: rgba(239,68,68,0.15);
+            --shadow: rgba(0,0,0,0.3);
+            --logo-shadow: rgba(74,222,128,0.3);
+        }
+        [data-theme="light"] {
+            --bg: #f0f2f5; --bg-card: rgba(255,255,255,0.95); --bg-input: rgba(241,245,249,0.9);
+            --border: rgba(22,163,74,0.2); --border-focus: rgba(22,163,74,0.5);
+            --text: #1e293b; --text-dim: #64748b; --text-muted: #94a3b8;
+            --green: #16a34a; --green-dark: #15803d; --gold: #d97706;
+            --red: #dc2626; --purple: #7c3aed; --diamond: #0891b2;
+            --tag-update-bg: rgba(22,163,74,0.1); --tag-event-bg: rgba(217,119,6,0.1);
+            --tag-notice-bg: rgba(124,58,237,0.1); --tag-urgent-bg: rgba(220,38,38,0.1);
+            --shadow: rgba(0,0,0,0.08);
+            --logo-shadow: rgba(22,163,74,0.2);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Noto Sans SC', sans-serif; font-size: 14px; line-height: 1.7;
+            background: var(--bg); color: var(--text); min-height: 100vh;
+        }
+
+        /* ====== 顶栏 ====== */
+        .topbar {
+            background: var(--bg-card); border-bottom: 1px solid var(--border);
+            padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px);
+        }
+        .topbar-left { display: flex; align-items: center; gap: 12px; }
+        .topbar-left .logo-icon {
+            width: 32px; height: 32px; border-radius: 0; image-rendering: pixelated;
+            box-shadow: 0 0 10px var(--logo-shadow);
+            display: flex; align-items: center; justify-content: center;
+            cursor: grab; user-select: none; -webkit-user-select: none; will-change: transform;
+        }
+        .topbar-left .logo-icon:active { cursor: grabbing; }
+        .topbar-left .logo-icon img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .topbar-left h1 {
+            font-family: 'Press Start 2P', sans-serif; font-size: 12px; color: var(--green);
+            text-shadow: 0 0 8px var(--logo-shadow);
+            display: inline-block; overflow: hidden; white-space: nowrap;
+            max-width: 300px; cursor: pointer;
+            transition: font-size 0.3s ease, letter-spacing 0.3s ease, max-width 0.3s ease;
+        }
+        .topbar-left h1.brand-full { font-size: 12px; letter-spacing: 1px; }
+        .topbar-left h1.brand-short { font-size: 16px; letter-spacing: 2px; max-width: 100px; }
+        @keyframes brandSlideOut { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-16px); } }
+        @keyframes brandSlideIn { 0% { opacity: 0; transform: translateY(16px); } 100% { opacity: 1; transform: translateY(0); } }
+        .brand-anim-out { animation: brandSlideOut 0.18s ease forwards; }
+        .brand-anim-in { animation: brandSlideIn 0.18s ease forwards; }
+
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        .topbar-right .status-dot { width:8px; height:8px; border-radius:50%; background:var(--green); }
+        .topbar-right .status-text { font-size:13px; color:var(--text-dim); }
+
+        /* ====== 登录页 ====== */
+        .login-page {
+            display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 56px);
+        }
+        .login-box {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 40px; width: 100%; max-width: 380px; text-align: center;
+        }
+        .login-box h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .login-box p { color: var(--text-dim); font-size: 13px; margin-bottom: 24px; }
+        .login-box input {
+            width: 100%; padding: 12px 16px; background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text); font-size: 14px; outline: none; margin-bottom: 16px;
+            font-family: 'Noto Sans SC', sans-serif; transition: border-color 0.2s;
+        }
+        .login-box input:focus { border-color: var(--border-focus); }
+        .login-box .error-msg { color: var(--red); font-size: 13px; margin-bottom: 12px; display: none; }
+
+        /* ====== 按钮 ====== */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 10px 20px; font-size: 14px; font-weight: 600; border-radius: 8px;
+            border: 1px solid transparent; cursor: pointer; font-family: 'Noto Sans SC', sans-serif;
+            transition: all 0.15s ease;
+        }
+        .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .btn:active { transform: translateY(1px); }
+        .btn-primary { background: var(--green); color: #0f0f1a; }
+        .btn-outline { background: transparent; color: var(--text); border-color: var(--border); }
+        .btn-outline:hover { border-color: var(--green); }
+        .btn-danger { background: var(--red); color: white; }
+        .btn-sm { padding: 6px 14px; font-size: 13px; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; filter: none; }
+
+        /* ====== 管理面板布局 ====== */
+        .admin-layout { display: flex; min-height: calc(100vh - 56px); }
+        .sidebar {
+            width: 200px; background: var(--bg-card); border-right: 1px solid var(--border);
+            padding: 16px 0; flex-shrink: 0;
+        }
+        .sidebar-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+            color: var(--text-dim); cursor: pointer; transition: all 0.2s; font-size: 14px;
+        }
+        .sidebar-item:hover { background: rgba(74,222,128,0.05); color: var(--text); }
+        .sidebar-item.active { color: var(--green); background: rgba(74,222,128,0.08); border-right: 3px solid var(--green); }
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+
+        /* ====== 管理面板通用 ====== */
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .panel-header h2 { font-size: 16px; font-weight: 700; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dim); margin-bottom: 6px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-size: 14px; outline: none;
+            font-family: 'Noto Sans SC', sans-serif; transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--border-focus); }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px 20px; margin-bottom: 12px; transition: border-color 0.2s;
+        }
+        .card:hover { border-color: var(--green); }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .card-header h3 { font-size: 14px; font-weight: 600; }
+        .card-actions { display: flex; gap: 8px; }
+
+        .tag { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+        .tag-update { background: var(--tag-update-bg); color: var(--green); }
+        .tag-event { background: var(--tag-event-bg); color: var(--gold); }
+        .tag-notice { background: var(--tag-notice-bg); color: var(--purple); }
+        .tag-urgent { background: var(--tag-urgent-bg); color: var(--red); }
+
+        .toggle-switch {
+            position: relative; width: 44px; height: 24px; background: rgba(100,100,140,0.3);
+            border-radius: 12px; cursor: pointer; transition: background 0.3s;
+        }
+        .toggle-switch.active { background: var(--green); }
+        .toggle-switch::after {
+            content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px;
+            background: white; border-radius: 50%; transition: left 0.3s;
+        }
+        .toggle-switch.active::after { left: 23px; }
+
+        .inline-row { display: flex; gap: 12px; align-items: flex-start; }
+        .inline-row .form-group { flex: 1; }
+
+        /* ====== Toast ====== */
+        .admin-toast {
+            position: fixed; bottom: 24px; right: 24px; background: var(--green); color: #0f0f1a;
+            padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 14px;
+            transform: translateY(80px); opacity: 0; transition: all 0.3s ease; z-index: 3000;
+        }
+        .admin-toast.show { transform: translateY(0); opacity: 1; }
+
+        .empty-state { text-align: center; padding: 40px; color: var(--text-muted); }
+
+        /* ====== 新闻编辑 Modal ====== */
+        .modal-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+        .modal-card-lg {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto;
+            padding: 28px; position: relative;
+        }
+        .modal-card-lg::-webkit-scrollbar { width: 6px; }
+        .modal-card-lg::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--bg-input); border: 1px solid var(--border); color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { background: var(--red); color: white; }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+
+        /* Quill 编辑器样式 */
+        .ql-toolbar.ql-snow { border: 1px solid var(--border) !important; border-radius: 8px 8px 0 0 !important; background: var(--bg-input) !important; }
+        .ql-container.ql-snow { border: 1px solid var(--border) !important; border-radius: 0 0 8px 8px !important; background: #ffffff !important; color: #1e293b !important; font-family: 'Noto Sans SC', sans-serif !important; font-size: 14px !important; min-height: 250px; }
+        .ql-editor { min-height: 250px; color: #1e293b !important; }
+        .ql-snow .ql-stroke { stroke: var(--text-dim) !important; }
+        .ql-snow .ql-fill { fill: var(--text-dim) !important; }
+        .ql-snow .ql-picker-label { color: var(--text-dim) !important; }
+        .ql-snow .ql-picker-options { background: var(--bg-card) !important; border-color: var(--border) !important; z-index: 2100 !important; }
+        .ql-snow .ql-picker-item { color: var(--text) !important; }
+        .ql-editor.ql-blank::before { color: var(--text-muted) !important; }
+        /* Quill 链接提示框样式 - 确保在 modal 上方显示 */
+        .ql-snow .ql-tooltip { z-index: 2100 !important; background: var(--bg-card) !important; border-color: var(--border) !important; color: var(--text) !important; box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important; }
+        .ql-snow .ql-tooltip input[type=text] { background: var(--bg-input) !important; color: var(--text) !important; border-color: var(--border) !important; }
+        .ql-snow .ql-tooltip a.ql-action::after { color: var(--green) !important; }
+
+        /* 上传区域 */
+        .upload-area { border: 2px dashed var(--border); border-radius: 10px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; color: var(--text-dim); }
+        .upload-area:hover { border-color: var(--green); background: rgba(74,222,128,0.05); }
+        .upload-area.dragging { border-color: var(--green); background: rgba(74,222,128,0.1); }
+        .file-list { margin-top: 12px; }
+        .file-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--bg-input); border-radius: 6px; margin-bottom: 6px; font-size: 13px; }
+        .file-item .file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .file-item .file-remove { cursor: pointer; color: var(--red); font-weight: bold; }
+
+        /* 投票/报名编辑 */
+        .sub-section { background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 12px; }
+        .sub-section-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .option-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .option-item input { flex: 1; }
+        .option-remove { cursor: pointer; color: var(--red); font-size: 16px; }
+
+        .news-status-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+        .news-status-draft { background: rgba(100,100,140,0.2); color: var(--text-dim); }
+        .news-status-published { background: var(--tag-update-bg); color: var(--green); }
+
+        /* ====== 投票结果和报名列表弹窗 ====== */
+        .stats-modal .modal-card-lg { max-width: 700px; }
+        .vote-result-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; position: relative; overflow: hidden; }
+        .vote-result-bar { position: absolute; left: 0; top: 0; height: 100%; background: var(--tag-update-bg); border-radius: 8px; z-index: 0; transition: width 0.5s ease; }
+        .vote-result-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; width: 100%; }
+        .vote-result-text { flex: 1; font-size: 14px; }
+        .vote-result-count { font-size: 13px; color: var(--green); font-weight: 600; min-width: 50px; text-align: right; }
+        .vote-result-pct { font-size: 13px; color: var(--text-dim); min-width: 40px; text-align: right; }
+
+        .participant-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        .participant-table th { text-align: left; padding: 8px 10px; background: var(--bg-input); border-bottom: 1px solid var(--border); color: var(--text-dim); font-weight: 600; }
+        .participant-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+        .participant-table tr:hover { background: rgba(74,222,128,0.03); }
+
+        @media (max-width: 768px) {
+            .admin-layout { flex-direction: column; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border);
+                display: flex; overflow-x: auto; padding: 8px; gap: 4px; }
+            .sidebar-item { padding: 8px 14px; white-space: nowrap; font-size: 13px; border-right: none !important;
+                border-bottom: 3px solid transparent; }
+            .sidebar-item.active { border-bottom: 3px solid var(--green); border-right: none !important; }
+            .inline-row { flex-direction: column; gap: 0; }
+        }
+
+        /* ====== 管理后台主题切换 ====== */
+        .admin-theme-toggle {
+            width: 44px; height: 24px; border-radius: 12px; cursor: pointer; position: relative;
+            background: rgba(100,100,140,0.3); border: 1px solid var(--border);
+            user-select: none; flex-shrink: 0; transition: background 0.3s;
+        }
+        .admin-theme-toggle:hover { border-color: var(--green); }
+        .admin-toggle-knob {
+            position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+            border-radius: 50%; background: var(--green); transition: left 0.3s ease;
+            display: flex; align-items: center; justify-content: center; font-size: 10px;
+        }
+        [data-theme="light"] .admin-theme-toggle { background: rgba(200,230,200,0.5); }
+        [data-theme="light"] .admin-toggle-knob { left: 22px; background: var(--gold); }
+        .admin-toggle-knob .moon { position: absolute; }
+        .admin-toggle-knob .sun { position: absolute; display: none; }
+        [data-theme="light"] .admin-toggle-knob .moon { display: none; }
+        [data-theme="light"] .admin-toggle-knob .sun { display: block; }
+    </style>
+</head>
+<body>
+
+<!-- 顶栏 -->
+<div class="topbar">
+    <div class="topbar-left" id="topbarBrand" style="cursor:pointer;">
+        <div class="logo-icon" id="logoIcon"><img src="icon.png" alt="MSMP"></div>
+        <h1 class="brand-full" id="brandText">MSMP Admin</h1>
+    </div>
+    <div class="topbar-right" id="topbarRight" style="display:none;">
+        <div class="admin-theme-toggle" id="adminThemeToggle" title="切换主题">
+            <div class="admin-toggle-knob">
+                <span class="moon">🌙</span>
+                <span class="sun">☀️</span>
+            </div>
+        </div>
+        <div class="status-dot"></div>
+        <span class="status-text">已连接</span>
+        <button class="btn btn-outline btn-sm" onclick="handleLogout()">退出登录</button>
+    </div>
+</div>
+
+<!-- 登录页 -->
+<div class="login-page" id="loginPage">
+    <div class="login-box">
+        <h2>🔐 管理面板</h2>
+        <p>请输入管理员密码以继续</p>
+        <input type="password" id="loginPassword" placeholder="输入管理员密码" onkeydown="if(event.key==='Enter')handleLogin()">
+        <div class="error-msg" id="loginError">密码错误，请重试</div>
+        <button class="btn btn-primary" style="width:100%;" onclick="handleLogin()">登录</button>
+    </div>
+</div>
+
+<!-- 管理面板 -->
+<div class="admin-layout" id="adminPanel" style="display:none;">
+    <div class="sidebar">
+        <div class="sidebar-item active" data-panel="news" onclick="switchPanel('news')">📰 新闻与公告</div>
+        <div class="sidebar-item" data-panel="rules" onclick="switchPanel('rules')">📜 规则管理</div>
+        <div class="sidebar-item" data-panel="info" onclick="switchPanel('info')">ℹ️ 基本信息</div>
+        <div class="sidebar-item" data-panel="status" onclick="switchPanel('status')">⚡ 服务器状态</div>
+        <div class="sidebar-item" data-panel="players" onclick="switchPanel('players')">👥 玩家管理</div>
+    </div>
+
+    <div class="main-content">
+        <!-- 新闻与公告管理（合并） -->
+        <div class="panel active" id="panel-news">
+            <div class="panel-header">
+                <h2>📰 新闻与公告</h2>
+                <button class="btn btn-primary btn-sm" onclick="openNewsEditor()">+ 发布新闻</button>
+            </div>
+            <div id="newsList"></div>
+        </div>
+
+        <!-- 规则管理 -->
+        <div class="panel" id="panel-rules">
+            <div class="panel-header">
+                <h2>📜 规则管理</h2>
+                <button class="btn btn-primary btn-sm" onclick="addRule()">+ 添加规则</button>
+            </div>
+            <div id="rulesList"></div>
+        </div>
+
+        <!-- 基本信息 -->
+        <div class="panel" id="panel-info">
+            <div class="panel-header"><h2>ℹ️ 基本信息</h2></div>
+            <div class="card">
+                <div class="form-group">
+                    <label>服务器名称（短）</label>
+                    <input type="text" id="infoName" placeholder="MSMP">
+                </div>
+                <div class="form-group">
+                    <label>服务器名称（全名）</label>
+                    <input type="text" id="infoFullName" placeholder="Mcking&Mitch Survival Multiplayer">
+                </div>
+                <div class="form-group">
+                    <label>服务器 IP 地址</label>
+                    <input type="text" id="infoIP" placeholder="msmp.mplusm.site">
+                </div>
+                <div class="inline-row">
+                    <div class="form-group">
+                        <label>支持版本范围</label>
+                        <input type="text" id="infoVersionRange" placeholder="1.9 — 1.26">
+                    </div>
+                    <div class="form-group">
+                        <label>推荐版本</label>
+                        <input type="text" id="infoRecommendVersion" placeholder="1.21.11">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>副标题（支持换行，用 \\n 分隔）</label>
+                    <textarea id="infoSubtitle" placeholder="一个充满创造与冒险的 Minecraft 世界\n与志同道合的玩家一起探索、建造、生存"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>MOTD 图片路径</label>
+                    <input type="text" id="infoMotdImage" placeholder="motd.png">
+                </div>
+                <div style="text-align:right; margin-top:16px;">
+                    <button class="btn btn-primary" onclick="saveInfo()">保存基本信息</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 服务器状态 -->
+        <div class="panel" id="panel-status">
+            <div class="panel-header"><h2>⚡ 服务器状态</h2></div>
+            <div class="card">
+                <div class="form-group">
+                    <label>服务器在线状态</label>
+                    <div style="display:flex; align-items:center; gap:12px; margin-top:4px;">
+                        <div class="toggle-switch" id="statusToggle" onclick="toggleStatus()"></div>
+                        <span id="statusLabel" style="font-weight:600;">离线</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>玩家上限</label>
+                    <input type="number" id="statusMaxPlayers" min="1" max="1000" value="50">
+                </div>
+                <div style="text-align:right; margin-top:16px;">
+                    <button class="btn btn-primary" onclick="saveStatus()">保存状态</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 玩家管理 -->
+        <div class="panel" id="panel-players">
+            <div class="panel-header">
+                <h2>👥 玩家管理</h2>
+                <button class="btn btn-outline btn-sm" onclick="loadPlayers()">刷新列表</button>
+            </div>
+            <div id="playersList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="admin-toast" id="adminToast"></div>
+
+<!-- 新闻编辑 Modal -->
+<div class="modal-overlay" id="newsEditorModal">
+    <div class="modal-card-lg">
+        <button class="modal-close" onclick="closeNewsEditor()">&times;</button>
+        <div class="modal-title" id="newsEditorTitle">发布新闻</div>
+        <input type="hidden" id="editNewsId" value="">
+
+        <div class="inline-row">
+            <div class="form-group" style="flex:2">
+                <label>标题 *</label>
+                <input type="text" id="newsTitle" placeholder="新闻标题">
+            </div>
+            <div class="form-group" style="flex:1">
+                <label>分类</label>
+                <select id="newsCategory">
+                    <option value="update">更新</option>
+                    <option value="event">活动</option>
+                    <option value="notice">通知</option>
+                    <option value="urgent">紧急</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex:1">
+                <label>状态</label>
+                <select id="newsStatus">
+                    <option value="draft">草稿</option>
+                    <option value="published">发布</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>摘要</label>
+            <textarea id="newsSummary" placeholder="新闻摘要（选填，显示在列表中）" style="min-height:50px"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>正文内容</label>
+            <div id="quillEditor"></div>
+        </div>
+
+        <div class="inline-row" style="margin-bottom:16px">
+            <div class="form-group">
+                <label>封面图片</label>
+                <div class="upload-area" id="coverUploadArea" onclick="document.getElementById('coverFileInput').click()">
+                    📷 点击上传封面图片
+                    <input type="file" id="coverFileInput" accept="image/*" style="display:none" onchange="uploadCoverImage(this)">
+                </div>
+                <div id="coverPreview" style="margin-top:8px"></div>
+            </div>
+            <div class="form-group">
+                <label>附件上传</label>
+                <div class="upload-area" id="attachUploadArea" onclick="document.getElementById('attachFileInput').click()">
+                    📎 点击上传附件（zip/pdf/png/jpg/json，10MB内）
+                    <input type="file" id="attachFileInput" accept=".zip,.pdf,.png,.jpg,.jpeg,.gif,.json" style="display:none" onchange="uploadAttachment(this)" multiple>
+                </div>
+                <div class="file-list" id="attachFileList"></div>
+            </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:24px; margin-bottom:16px; flex-wrap:wrap">
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px">
+                <input type="checkbox" id="newsPinned" style="accent-color:var(--green)"> 置顶
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px">
+                <input type="checkbox" id="newsSync" checked style="accent-color:var(--green)"> 同步到首页公告
+            </label>
+        </div>
+
+        <!-- 投票区 -->
+        <div class="sub-section">
+            <div class="sub-section-title">🗳️ 投票（选填）</div>
+            <div class="form-group">
+                <label>投票标题</label>
+                <input type="text" id="voteTitle" placeholder="留空则不创建投票">
+            </div>
+            <div class="form-group">
+                <label>投票选项</label>
+                <div id="voteOptions">
+                    <div class="option-item"><input type="text" placeholder="选项 1" class="vote-opt-input"><span class="option-remove" onclick="this.parentElement.remove()">&times;</span></div>
+                    <div class="option-item"><input type="text" placeholder="选项 2" class="vote-opt-input"><span class="option-remove" onclick="this.parentElement.remove()">&times;</span></div>
+                </div>
+                <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="addVoteOption()">+ 添加选项</button>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; font-size:13px">
+                <label style="display:flex; align-items:center; gap:4px; cursor:pointer">
+                    <input type="checkbox" id="voteMultiple" style="accent-color:var(--green)"> 允许多选
+                </label>
+            </div>
+        </div>
+
+        <!-- 报名区 -->
+        <div class="sub-section" style="margin-top:16px">
+            <div class="sub-section-title">📝 报名（选填）</div>
+            <div class="form-group">
+                <label>报名标题</label>
+                <input type="text" id="regTitle" placeholder="留空则不创建报名">
+            </div>
+            <div class="inline-row">
+                <div class="form-group">
+                    <label>名额上限</label>
+                    <input type="number" id="regMaxParticipants" placeholder="不限" min="1">
+                </div>
+                <div class="form-group">
+                    <label>截止时间</label>
+                    <input type="datetime-local" id="regEndAt">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>自定义字段（每行一个，格式：字段名|提示文字|是否必填）</label>
+                <textarea id="regFields" placeholder="游戏ID|请输入游戏内ID|true&#10;联系方式|QQ或Discord|false" style="min-height:60px"></textarea>
+            </div>
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px">
+                <input type="checkbox" id="regRequireWhitelist" checked style="accent-color:var(--green)"> 需要白名单
+            </label>
+        </div>
+
+        <div style="text-align:right; margin-top:20px; display:flex; gap:8px; justify-content:flex-end">
+            <button class="btn btn-outline" onclick="closeNewsEditor()">取消</button>
+            <button class="btn btn-primary" onclick="saveNews()">保存新闻</button>
+        </div>
+    </div>
+</div>
+
+<!-- 投票结果/报名列表 Modal -->
+<div class="modal-overlay stats-modal" id="statsModal">
+    <div class="modal-card-lg">
+        <button class="modal-close" onclick="closeStatsModal()">&times;</button>
+        <div class="modal-title" id="statsModalTitle">统计详情</div>
+        <div id="statsModalContent"></div>
+    </div>
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<!-- Quill 富文本编辑器 -->
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script>
+    let siteContent = null;
+    let isAuthenticated = false;
+
+    // ====== 主题初始化 ======
+    (function() {
+        const saved = localStorage.getItem('msmp-theme');
+        if (saved) document.documentElement.setAttribute('data-theme', saved);
+        else if (window.matchMedia('(prefers-color-scheme: light)').matches)
+            document.documentElement.setAttribute('data-theme', 'light');
+    })();
+
+    // 管理后台主题切换
+    document.getElementById('adminThemeToggle').addEventListener('click', function() {
+        const html = document.documentElement;
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('msmp-theme', next);
+    });
+
+    // ====== Logo 长按旋转 + 惯性 ======
+    (function initLogoSpin() {
+        const logoIcon = document.getElementById('logoIcon');
+        let isHolding = false, rotation = 0, velocity = 0, spinRAF = null, holdTimer = null, lastTime = 0;
+        const ACCELERATION = 0.8, MAX_SPEED = 30, FRICTION = 0.97;
+
+        function spinLoop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const dt = Math.min(timestamp - lastTime, 32); lastTime = timestamp;
+            if (isHolding) { velocity = Math.min(velocity + ACCELERATION * (dt / 16), MAX_SPEED); }
+            else { velocity *= FRICTION; if (velocity < 0.1) { velocity = 0; logoIcon.style.transform = 'rotate(' + rotation + 'deg)'; spinRAF = null; return; } }
+            rotation += velocity * (dt / 16); if (rotation >= 360) rotation -= 360;
+            logoIcon.style.transform = 'rotate(' + rotation + 'deg)';
+            spinRAF = requestAnimationFrame(spinLoop);
+        }
+
+        function startSpin(e) { e.preventDefault(); e.stopPropagation(); isHolding = true; lastTime = 0; holdTimer = setTimeout(() => { if (isHolding && !spinRAF) spinRAF = requestAnimationFrame(spinLoop); }, 150); }
+        function stopSpin() { clearTimeout(holdTimer); isHolding = false; }
+        function cancelSpin() { clearTimeout(holdTimer); isHolding = false; velocity = 0; if (spinRAF) { cancelAnimationFrame(spinRAF); spinRAF = null; } logoIcon.style.transform = 'rotate(' + rotation + 'deg)'; }
+
+        logoIcon.addEventListener('mousedown', startSpin);
+        document.addEventListener('mouseup', stopSpin);
+        logoIcon.addEventListener('touchstart', startSpin, { passive: false });
+        document.addEventListener('touchend', stopSpin);
+        document.addEventListener('touchcancel', cancelSpin);
+        window.addEventListener('blur', cancelSpin);
+    })();
+
+    // ====== 品牌标题切换 ======
+    const brandText = document.getElementById('brandText');
+    let brandShowFull = true, brandAnimating = false;
+
+    document.getElementById('topbarBrand').addEventListener('click', function(e) {
+        if (e.target.closest('.logo-icon')) return;
+        if (brandAnimating) return; brandAnimating = true;
+        brandText.classList.add('brand-anim-out');
+        setTimeout(() => {
+            if (brandShowFull) { brandText.textContent = 'MSMP'; brandText.classList.remove('brand-full'); brandText.classList.add('brand-short'); }
+            else { brandText.textContent = 'MSMP Admin'; brandText.classList.remove('brand-short'); brandText.classList.add('brand-full'); }
+            brandShowFull = !brandShowFull;
+            brandText.classList.remove('brand-anim-out'); brandText.classList.add('brand-anim-in');
+            setTimeout(() => { brandText.classList.remove('brand-anim-in'); brandAnimating = false; }, 200);
+        }, 200);
+    });
+
+    // ====== 登录 ======
+    async function handleLogin() {
+        const pwd = document.getElementById('loginPassword').value;
+        if (!pwd) return;
+        try {
+            const res = await fetch('/api/admin/login', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ password: pwd })
+            });
+            if (res.ok) {
+                isAuthenticated = true;
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'flex';
+                document.getElementById('topbarRight').style.display = 'flex';
+                loadContent();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        } catch (e) {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    }
+
+    async function handleLogout() {
+        await fetch('/api/admin/logout', { method: 'POST' });
+        isAuthenticated = false;
+        document.getElementById('loginPage').style.display = 'flex';
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('topbarRight').style.display = 'none';
+        document.getElementById('loginPassword').value = '';
+    }
+
+    // ====== 检查登录状态 ======
+    async function checkAuth() {
+        try {
+            const res = await fetch('/api/admin/check');
+            const data = await res.json();
+            if (data.authenticated) {
+                isAuthenticated = true;
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'flex';
+                document.getElementById('topbarRight').style.display = 'flex';
+                loadContent();
+            }
+        } catch(e) {}
+    }
+    checkAuth();
+
+    // ====== 加载内容 ======
+    async function loadContent() {
+        try {
+            const res = await fetch('/api/content');
+            siteContent = await res.json();
+            renderAll();
+        } catch(e) { console.error('加载失败', e); }
+    }
+
+    // ====== 渲染所有面板 ======
+    function renderAll() {
+        renderRules();
+        renderInfo();
+        renderStatus();
+    }
+
+    // ====== 面板切换 ======
+    function switchPanel(name) {
+        document.querySelectorAll('.sidebar-item').forEach(el => el.classList.toggle('active', el.dataset.panel === name));
+        document.querySelectorAll('.panel').forEach(el => el.classList.toggle('active', el.id === 'panel-' + name));
+        if (name === 'news') loadNewsList();
+        if (name === 'players') loadPlayers();
+    }
+
+    // ====== 规则管理 ======
+    function renderRules() {
+        const list = document.getElementById('rulesList');
+        list.innerHTML = siteContent.rules.map((r, i) => `
+            <div class="card">
+                <div class="card-header">
+                    <h3>${r.icon} ${r.title}</h3>
+                    <div class="card-actions">
+                        <button class="btn btn-outline btn-sm" onclick="editRule(${i})">编辑</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteRule(${i})">删除</button>
+                    </div>
+                </div>
+                <ul style="list-style:none; padding:0;">
+                    ${r.items.map(item => '<li style="padding:2px 0; color:var(--text-dim);">▸ ' + item + '</li>').join('')}
+                </ul>
+            </div>
+        `).join('');
+    }
+
+    function addRule() {
+        siteContent.rules.push({ id: Date.now(), icon: '📋', iconColor: 'green', title: '新规则', items: ['规则条目1'] });
+        renderRules();
+        saveContent();
+        showAdminToast('已添加新规则');
+    }
+
+    function editRule(index) {
+        const r = siteContent.rules[index];
+        const card = document.querySelectorAll('#rulesList .card')[index];
+        card.innerHTML = `
+            <div class="inline-row">
+                <div class="form-group" style="max-width:80px;"><label>图标</label><input type="text" id="rule-icon-${index}" value="${r.icon}" style="text-align:center; font-size:20px;"></div>
+                <div class="form-group" style="max-width:120px;"><label>颜色</label>
+                    <select id="rule-color-${index}">
+                        <option value="green" ${r.iconColor==='green'?'selected':''}>绿色</option>
+                        <option value="gold" ${r.iconColor==='gold'?'selected':''}>金色</option>
+                        <option value="diamond" ${r.iconColor==='diamond'?'selected':''}>蓝色</option>
+                        <option value="red" ${r.iconColor==='red'?'selected':''}>红色</option>
+                        <option value="purple" ${r.iconColor==='purple'?'selected':''}>紫色</option>
+                        <option value="cyan" ${r.iconColor==='cyan'?'selected':''}>青色</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>标题</label><input type="text" id="rule-title-${index}" value="${r.title}"></div>
+            </div>
+            <div class="form-group"><label>规则条目（每行一条）</label>
+                <textarea id="rule-items-${index}" style="min-height:120px;">${r.items.join('\n')}</textarea>
+            </div>
+            <div style="text-align:right; margin-top:8px;">
+                <button class="btn btn-primary btn-sm" onclick="saveRule(${index})">保存</button>
+                <button class="btn btn-outline btn-sm" onclick="renderRules()">取消</button>
+            </div>
+        `;
+    }
+
+    function saveRule(index) {
+        siteContent.rules[index].icon = document.getElementById('rule-icon-'+index).value;
+        siteContent.rules[index].iconColor = document.getElementById('rule-color-'+index).value;
+        siteContent.rules[index].title = document.getElementById('rule-title-'+index).value;
+        siteContent.rules[index].items = document.getElementById('rule-items-'+index).value.split('\n').filter(s => s.trim());
+        renderRules();
+        saveContent();
+        showAdminToast('规则已更新');
+    }
+
+    function deleteRule(index) {
+        if (!confirm('确定删除此规则分类？')) return;
+        siteContent.rules.splice(index, 1);
+        renderRules();
+        saveContent();
+        showAdminToast('规则已删除');
+    }
+
+    // ====== 基本信息 ======
+    function renderInfo() {
+        const info = siteContent.serverInfo;
+        document.getElementById('infoName').value = info.name || '';
+        document.getElementById('infoFullName').value = info.fullName || '';
+        document.getElementById('infoIP').value = info.ip || '';
+        document.getElementById('infoVersionRange').value = info.versionRange || '';
+        document.getElementById('infoRecommendVersion').value = info.recommendVersion || '';
+        document.getElementById('infoSubtitle').value = (info.subtitle || '').replace(/\\n/g, '\n');
+        document.getElementById('infoMotdImage').value = info.motdImage || '';
+    }
+
+    function saveInfo() {
+        siteContent.serverInfo.name = document.getElementById('infoName').value;
+        siteContent.serverInfo.fullName = document.getElementById('infoFullName').value;
+        siteContent.serverInfo.ip = document.getElementById('infoIP').value;
+        siteContent.serverInfo.versionRange = document.getElementById('infoVersionRange').value;
+        siteContent.serverInfo.recommendVersion = document.getElementById('infoRecommendVersion').value;
+        siteContent.serverInfo.subtitle = document.getElementById('infoSubtitle').value.replace(/\n/g, '\\n');
+        siteContent.serverInfo.motdImage = document.getElementById('infoMotdImage').value;
+        saveContent();
+        showAdminToast('基本信息已保存');
+    }
+
+    // ====== 服务器状态 ======
+    function renderStatus() {
+        const info = siteContent.serverInfo;
+        const toggle = document.getElementById('statusToggle');
+        const label = document.getElementById('statusLabel');
+        document.getElementById('statusMaxPlayers').value = info.maxPlayers;
+        if (info.online) { toggle.classList.add('active'); label.textContent = '在线'; label.style.color = 'var(--green)'; }
+        else { toggle.classList.remove('active'); label.textContent = '离线'; label.style.color = 'var(--red)'; }
+    }
+
+    function toggleStatus() {
+        siteContent.serverInfo.online = !siteContent.serverInfo.online;
+        renderStatus();
+    }
+
+    function saveStatus() {
+        siteContent.serverInfo.maxPlayers = parseInt(document.getElementById('statusMaxPlayers').value) || 50;
+        saveContent();
+        showAdminToast('服务器状态已保存');
+    }
+
+    // ====== 保存到服务器 ======
+    async function saveContent() {
+        try {
+            const res = await fetch('/api/admin/content', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(siteContent)
+            });
+            if (!res.ok) { showAdminToast('保存失败'); }
+        } catch(e) { showAdminToast('保存失败: ' + e.message); }
+    }
+
+    // ====== Toast ======
+    function showAdminToast(text) {
+        const t = document.getElementById('adminToast');
+        t.textContent = text;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // ====== Socket.io 实时同步 ======
+    const socket = io();
+    socket.on('content-update', function(data) {
+        siteContent = data;
+        renderAll();
+    });
+
+    // ====== 玩家管理 ======
+    let playersList = [];
+
+    async function loadPlayers() {
+        try {
+            const res = await fetch('/api/admin/players');
+            if (res.ok) {
+                const data = await res.json();
+                playersList = data.players || [];
+                renderPlayers();
+            }
+        } catch(e) { showAdminToast('加载玩家列表失败'); }
+    }
+
+    function renderPlayers() {
+        const list = document.getElementById('playersList');
+        if (!playersList.length) {
+            list.innerHTML = '<div class="empty-state">暂无注册玩家</div>';
+            return;
+        }
+        list.innerHTML = playersList.map(p => `
+            <div class="card">
+                <div class="card-header">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:#0f0f1a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;">${p.username.charAt(0).toUpperCase()}</div>
+                        <div>
+                            <div style="font-weight:600;">${p.username}</div>
+                            <div style="font-size:12px; color:var(--text-muted);">MC: ${p.mcUsername} · ${p.mcUUIDType === 'online' ? '正版' : '离线'}</div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <span class="tag ${p.whitelisted ? 'tag-update' : 'tag-urgent'}" style="cursor:pointer;" onclick="togglePlayerWhitelist(${p.id})">${p.whitelisted ? '白名单中' : '未加白名单'}</span>
+                        <span class="tag ${p.banned ? 'tag-urgent' : 'tag-update'}" style="cursor:pointer;" onclick="togglePlayerBan(${p.id})">${p.banned ? '已封禁' : '正常'}</span>
+                        <button class="btn btn-danger btn-sm" onclick="deletePlayer(${p.id})">删除</button>
+                    </div>
+                </div>
+                <div style="font-size:12px; color:var(--text-muted); display:flex; gap:16px; flex-wrap:wrap;">
+                    <span>UUID: ${p.mcUUID || '未知'}</span>
+                    ${p.email ? '<span>邮箱: ' + p.email + '</span>' : ''}
+                    <span>注册: ${p.registeredAt ? new Date(p.registeredAt).toLocaleDateString('zh-CN') : '未知'}</span>
+                    <span>最后登录: ${p.lastLoginAt ? new Date(p.lastLoginAt).toLocaleDateString('zh-CN') : '从未'}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function togglePlayerWhitelist(playerId) {
+        try {
+            const res = await fetch('/api/admin/players/' + playerId + '/whitelist', { method: 'POST' });
+            if (res.ok) {
+                const data = await res.json();
+                const p = playersList.find(p => p.id === playerId);
+                if (p) p.whitelisted = data.whitelisted;
+                renderPlayers();
+                showAdminToast(data.whitelisted ? '已加入白名单' : '已移出白名单');
+            }
+        } catch(e) { showAdminToast('操作失败'); }
+    }
+
+    async function togglePlayerBan(playerId) {
+        const p = playersList.find(p => p.id === playerId);
+        if (!p) return;
+        if (!p.banned && !confirm('确定要封禁玩家 ' + p.username + ' 吗？')) return;
+        try {
+            const res = await fetch('/api/admin/players/' + playerId + '/ban', { method: 'POST' });
+            if (res.ok) {
+                const data = await res.json();
+                const player = playersList.find(p => p.id === playerId);
+                if (player) player.banned = data.banned;
+                renderPlayers();
+                showAdminToast(data.banned ? '已封禁玩家' : '已解封玩家');
+            }
+        } catch(e) { showAdminToast('操作失败'); }
+    }
+
+    async function deletePlayer(playerId) {
+        if (!confirm('确定删除此玩家？此操作不可恢复！')) return;
+        try {
+            const res = await fetch('/api/admin/players/' + playerId, { method: 'DELETE' });
+            if (res.ok) {
+                playersList = playersList.filter(p => p.id !== playerId);
+                renderPlayers();
+                showAdminToast('玩家已删除');
+            }
+        } catch(e) { showAdminToast('删除失败'); }
+    }
+
+    // ====== 新闻管理 ======
+    let newsList = [];
+    let quillEditor = null;
+
+    function initQuill() {
+        if (quillEditor) return;
+        quillEditor = new Quill('#quillEditor', {
+            theme: 'snow',
+            placeholder: '在这里编写新闻正文...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    ['blockquote', 'code-block'],
+                    ['link', 'image'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // 自定义链接处理：自动补全协议前缀
+        quillEditor.getModule('toolbar').addHandler('link', function(value) {
+            if (value) {
+                var href = prompt('请输入链接地址:');
+                if (href) {
+                    // 自动补全协议前缀
+                    if (href && !href.match(/^https?:\/\//i) && !href.startsWith('/') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+                        href = 'https://' + href;
+                    }
+                    quillEditor.format('link', href);
+                }
+            } else {
+                quillEditor.format('link', false);
+            }
+        });
+    }
+
+    async function loadNewsList() {
+        try {
+            const res = await fetch('/api/admin/news');
+            if (res.ok) {
+                const data = await res.json();
+                newsList = data.news || [];
+                renderNewsList();
+            }
+        } catch(e) { showAdminToast('加载新闻失败'); }
+    }
+
+    function renderNewsList() {
+        const list = document.getElementById('newsList');
+        if (!newsList.length) {
+            list.innerHTML = '<div class="empty-state">暂无新闻，点击上方按钮发布</div>';
+            return;
+        }
+        const catLabels = { update: '更新', event: '活动', notice: '通知', urgent: '紧急' };
+        list.innerHTML = newsList.map(n => `
+            <div class="card">
+                <div class="card-header">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="tag tag-${n.category}">${catLabels[n.category] || '通知'}</span>
+                        <span class="news-status-badge news-status-${n.status}">${n.status === 'published' ? '已发布' : '草稿'}</span>
+                        ${n.pinned ? '<span style="font-size:12px; color:var(--gold);">📌 置顶</span>' : ''}
+                        <span style="font-size:12px; color:var(--text-muted);">👁 ${n.viewCount || 0}</span>
+                        ${n.syncToAnnouncements !== false && n.status === 'published' ? '<span style="font-size:11px; color:var(--green);">📋 首页公告</span>' : ''}
+                    </div>
+                    <div class="card-actions">
+                        ${n.voteId ? '<button class="btn btn-outline btn-sm" onclick="showVoteResults(' + n.id + ')" title="查看投票结果">🗳️ 投票</button>' : ''}
+                        ${n.registrationId ? '<button class="btn btn-outline btn-sm" onclick="showRegParticipants(' + n.id + ')" title="查看报名列表">📝 报名</button>' : ''}
+                        <button class="btn btn-outline btn-sm" onclick="editNews(${n.id})">编辑</button>
+                        <button class="btn btn-outline btn-sm" onclick="toggleNewsPin(${n.id})">${n.pinned ? '取消置顶' : '置顶'}</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteNews(${n.id})">删除</button>
+                    </div>
+                </div>
+                <div style="font-weight:600; margin-bottom:4px;">${n.title}</div>
+                <div style="font-size:13px; color:var(--text-dim);">${n.summary || (n.content || '').replace(/<[^>]+>/g, '').slice(0, 80) + '...'}</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-top:6px">
+                    ${n.publishedAt ? '发布: ' + n.publishedAt.slice(0, 10) : ''}
+                    ${n.voteId ? ' 🗳️含投票' : ''}${n.registrationId ? ' 📝含报名' : ''}
+                    ${(n.attachments || []).length ? ' 📎' + n.attachments.length + '个附件' : ''}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ====== 查看投票结果 ======
+    async function showVoteResults(newsId) {
+        try {
+            const res = await fetch('/api/admin/news/' + newsId + '/stats');
+            if (!res.ok) throw new Error('加载失败');
+            const data = await res.json();
+            const vote = data.vote;
+            if (!vote) { showAdminToast('该新闻没有投票'); return; }
+
+            document.getElementById('statsModalTitle').textContent = '🗳️ 投票结果 - ' + vote.title;
+            const total = vote.options.reduce((s, o) => s + o.votes, 0);
+
+            let html = `<div style="margin-bottom:12px; color:var(--text-dim); font-size:13px;">
+                共 ${vote.voterCount || total} 人参与投票 · ${vote.allowMultiple ? '多选' : '单选'}
+            </div>`;
+
+            vote.options.forEach(opt => {
+                const pct = total > 0 ? Math.round((opt.votes / total) * 100) : 0;
+                html += `<div class="vote-result-item">
+                    <div class="vote-result-bar" style="width:${pct}%"></div>
+                    <div class="vote-result-inner">
+                        <span class="vote-result-text">${opt.text}</span>
+                        <span class="vote-result-count">${opt.votes} 票</span>
+                        <span class="vote-result-pct">${pct}%</span>
+                    </div>
+                </div>`;
+            });
+
+            // 投票人详情表格
+            const voterDetails = vote.voterDetails || [];
+            if (voterDetails.length > 0) {
+                html += `<div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+                    <div style="font-size:14px; font-weight:600; margin-bottom:12px;">👥 投票人详情</div>
+                    <table class="participant-table">
+                        <thead><tr>
+                            <th>#</th>
+                            <th>投票人</th>
+                            <th>选择</th>
+                        </tr></thead><tbody>`;
+                voterDetails.forEach((v, i) => {
+                    html += `<tr>
+                        <td>${i + 1}</td>
+                        <td>${v.username || '未知'}</td>
+                        <td>${(v.selectedOptions || []).join('、')}</td>
+                    </tr>`;
+                });
+                html += '</tbody></table></div>';
+            } else {
+                html += `<div style="margin-top:16px; color:var(--text-muted); font-size:13px; text-align:center;">暂无投票人数据</div>`;
+            }
+
+            document.getElementById('statsModalContent').innerHTML = html;
+            document.getElementById('statsModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } catch(e) { showAdminToast('加载投票结果失败'); }
+    }
+
+    // ====== 查看报名列表 ======
+    async function showRegParticipants(newsId) {
+        try {
+            const res = await fetch('/api/admin/news/' + newsId + '/stats');
+            if (!res.ok) throw new Error('加载失败');
+            const data = await res.json();
+            const reg = data.registration;
+            if (!reg) { showAdminToast('该新闻没有报名'); return; }
+
+            document.getElementById('statsModalTitle').textContent = '📝 报名列表 - ' + reg.title;
+
+            let html = `<div style="margin-bottom:12px; color:var(--text-dim); font-size:13px;">
+                已报名 ${reg.totalParticipants} 人${reg.maxParticipants ? ' / 上限 ' + reg.maxParticipants + ' 人' : ''}
+            </div>`;
+
+            if (reg.participants && reg.participants.length > 0) {
+                // 收集所有自定义字段
+                const fields = reg.fields || [];
+                html += `<table class="participant-table">
+                    <thead><tr>
+                        <th>#</th><th>用户名</th><th>MC用户名</th>
+                        ${fields.map(f => '<th>' + f.label + '</th>').join('')}
+                        <th>报名时间</th>
+                    </tr></thead><tbody>`;
+
+                reg.participants.forEach((p, i) => {
+                    html += `<tr>
+                        <td>${i + 1}</td>
+                        <td>${p.username || ''}</td>
+                        <td>${p.mcUsername || ''}</td>
+                        ${fields.map(f => '<td>' + (p.data && p.data[f.name] || '-') + '</td>').join('')}
+                        <td>${p.registeredAt ? new Date(p.registeredAt).toLocaleString('zh-CN') : ''}</td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+            } else {
+                html += '<div class="empty-state">暂无报名</div>';
+            }
+
+            document.getElementById('statsModalContent').innerHTML = html;
+            document.getElementById('statsModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } catch(e) { showAdminToast('加载报名列表失败'); }
+    }
+
+    function closeStatsModal() {
+        document.getElementById('statsModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('statsModal').addEventListener('click', function(e) {
+        if (e.target === this) closeStatsModal();
+    });
+
+    function openNewsEditor(newsId) {
+        initQuill();
+        document.getElementById('editNewsId').value = newsId || '';
+        document.getElementById('newsEditorTitle').textContent = newsId ? '编辑新闻' : '发布新闻';
+
+        // 重置表单
+        document.getElementById('newsTitle').value = '';
+        document.getElementById('newsCategory').value = 'notice';
+        document.getElementById('newsStatus').value = 'draft';
+        document.getElementById('newsSummary').value = '';
+        document.getElementById('newsPinned').checked = false;
+        document.getElementById('newsSync').checked = true;
+        document.getElementById('coverPreview').innerHTML = '';
+        document.getElementById('attachFileList').innerHTML = '';
+        document.getElementById('voteTitle').value = '';
+        document.getElementById('voteMultiple').checked = false;
+        document.getElementById('regTitle').value = '';
+        document.getElementById('regMaxParticipants').value = '';
+        document.getElementById('regEndAt').value = '';
+        document.getElementById('regFields').value = '';
+        document.getElementById('regRequireWhitelist').checked = true;
+        quillEditor.setContents([]);
+
+        // 重置投票选项
+        document.getElementById('voteOptions').innerHTML = `
+            <div class="option-item"><input type="text" placeholder="选项 1" class="vote-opt-input"><span class="option-remove" onclick="this.parentElement.remove()">&times;</span></div>
+            <div class="option-item"><input type="text" placeholder="选项 2" class="vote-opt-input"><span class="option-remove" onclick="this.parentElement.remove()">&times;</span></div>
+        `;
+
+        if (newsId) {
+            // 加载现有新闻数据（从列表中获取基本信息）
+            const news = newsList.find(n => n.id === newsId);
+            if (news) {
+                document.getElementById('newsTitle').value = news.title || '';
+                document.getElementById('newsCategory').value = news.category || 'notice';
+                document.getElementById('newsStatus').value = news.status || 'draft';
+                document.getElementById('newsSummary').value = news.summary || '';
+                document.getElementById('newsPinned').checked = news.pinned || false;
+                document.getElementById('newsSync').checked = news.syncToAnnouncements !== false;
+
+                if (news.content) {
+                    quillEditor.root.innerHTML = news.content;
+                }
+
+                // 封面图片 - 同时设置预览和隐藏字段
+                if (news.coverImage) {
+                    document.getElementById('coverPreview').innerHTML = `<img src="${news.coverImage}" style="max-width:200px;max-height:120px;border-radius:8px"><input type="hidden" id="coverImageUrl" value="${news.coverImage}">`;
+                }
+
+                if (news.attachments && news.attachments.length) {
+                    document.getElementById('attachFileList').innerHTML = news.attachments.map(a =>
+                        `<div class="file-item" data-url="${a.url}" data-name="${a.originalName}" data-size="${a.size}" data-mime-type="${a.mimeType}" data-file-id="${a.id}"><span class="file-name">📎 ${a.originalName}</span><span class="file-remove" onclick="this.parentElement.remove()">&times;</span></div>`
+                    ).join('');
+                }
+
+                // 加载关联的投票和报名数据
+                loadVoteAndRegistration(newsId, news);
+            }
+        }
+
+        document.getElementById('newsEditorModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        // 防止浏览器返回手势丢失编辑内容
+        history.pushState({ editorOpen: true }, '');
+        window.addEventListener('popstate', handleEditorPopState);
+        window.addEventListener('beforeunload', handleEditorUnload);
+    }
+
+    // 加载新闻关联的投票和报名数据
+    async function loadVoteAndRegistration(newsId, news) {
+        try {
+            const res = await fetch('/api/news/' + newsId);
+            if (!res.ok) return;
+            const detail = await res.json();
+
+            // 加载投票数据
+            if (detail.vote) {
+                const vote = detail.vote;
+                document.getElementById('voteTitle').value = vote.title || '';
+                document.getElementById('voteMultiple').checked = vote.allowMultiple || false;
+
+                // 填充投票选项
+                const optionsHtml = (vote.options || []).map((opt, i) =>
+                    `<div class="option-item"><input type="text" value="${opt.text}" placeholder="选项 ${i+1}" class="vote-opt-input"><span class="option-remove" onclick="this.parentElement.remove()">&times;</span></div>`
+                ).join('');
+                if (optionsHtml) {
+                    document.getElementById('voteOptions').innerHTML = optionsHtml;
+                }
+            }
+
+            // 加载报名数据
+            if (detail.registration) {
+                const reg = detail.registration;
+                document.getElementById('regTitle').value = reg.title || '';
+                document.getElementById('regMaxParticipants').value = reg.maxParticipants || '';
+                if (reg.endAt) {
+                    // 转换 ISO 格式为 datetime-local 输入格式
+                    const d = new Date(reg.endAt);
+                    const localStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + 'T' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+                    document.getElementById('regEndAt').value = localStr;
+                }
+                document.getElementById('regRequireWhitelist').checked = reg.requireWhitelist !== false;
+
+                // 反序列化自定义字段为文本格式
+                if (reg.fields && reg.fields.length > 0) {
+                    const fieldsText = reg.fields.map(f => f.name + '|' + (f.placeholder || '') + '|' + (f.required ? 'true' : 'false')).join('\n');
+                    document.getElementById('regFields').value = fieldsText;
+                }
+            }
+        } catch(e) {
+            console.error('加载投票/报名数据失败', e);
+        }
+    }
+
+    function handleEditorPopState(e) {
+        // 如果编辑器打开中，阻止返回并重新推入
+        if (document.getElementById('newsEditorModal').classList.contains('active')) {
+            history.pushState({ editorOpen: true }, '');
+            // 可选：提醒用户
+            showAdminToast('请先保存或关闭编辑器');
+        }
+        window.removeEventListener('popstate', handleEditorPopState);
+    }
+
+    function handleEditorUnload(e) {
+        if (document.getElementById('newsEditorModal').classList.contains('active')) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    }
+
+    function closeNewsEditor() {
+        document.getElementById('newsEditorModal').classList.remove('active');
+        document.body.style.overflow = '';
+        // 移除编辑器保护
+        window.removeEventListener('popstate', handleEditorPopState);
+        window.removeEventListener('beforeunload', handleEditorUnload);
+    }
+
+    function addVoteOption() {
+        const idx = document.querySelectorAll('.vote-opt-input').length + 1;
+        const div = document.createElement('div');
+        div.className = 'option-item';
+        div.innerHTML = `<input type="text" placeholder="选项 ${idx}" class="vote-opt-input"><span class="option-remove" onclick="this.parentElement.remove()">&times;</span>`;
+        document.getElementById('voteOptions').appendChild(div);
+    }
+
+    async function uploadCoverImage(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('type', 'image');
+        try {
+            const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('coverPreview').innerHTML = `<img src="${data.file.url}" style="max-width:200px;max-height:120px;border-radius:8px"><input type="hidden" id="coverImageUrl" value="${data.file.url}">`;
+                showAdminToast('封面图片已上传');
+            } else {
+                showAdminToast(data.error || '上传失败');
+            }
+        } catch(e) { showAdminToast('上传失败'); }
+        input.value = '';
+    }
+
+    async function uploadAttachment(input) {
+        const files = input.files;
+        for (const file of files) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('type', 'attachment');
+            try {
+                const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    const listEl = document.getElementById('attachFileList');
+                    const div = document.createElement('div');
+                    div.className = 'file-item';
+                    div.dataset.url = data.file.url;
+                    div.dataset.name = data.file.originalName;
+                    div.dataset.size = data.file.size;
+                    div.dataset.mimeType = data.file.mimeType;
+                    div.dataset.fileId = data.file.id;
+                    div.innerHTML = `<span class="file-name">📎 ${data.file.originalName} (${(data.file.size/1024).toFixed(0)}KB)</span><span class="file-remove" onclick="this.parentElement.remove()">&times;</span>`;
+                    listEl.appendChild(div);
+                    showAdminToast('附件已上传: ' + data.file.originalName);
+                } else {
+                    showAdminToast(data.error || '上传失败');
+                }
+            } catch(e) { showAdminToast('上传失败'); }
+        }
+        input.value = '';
+    }
+
+    async function saveNews() {
+        const newsId = document.getElementById('editNewsId').value;
+        const title = document.getElementById('newsTitle').value.trim();
+        if (!title) { showAdminToast('标题不能为空'); return; }
+
+        const content = quillEditor.root.innerHTML;
+        const coverEl = document.getElementById('coverImageUrl');
+        const coverImage = coverEl ? coverEl.value : null;
+
+        // 收集附件
+        const attachments = [];
+        document.querySelectorAll('#attachFileList .file-item').forEach(item => {
+            attachments.push({
+                id: item.dataset.fileId,
+                url: item.dataset.url,
+                originalName: item.dataset.name,
+                size: parseInt(item.dataset.size) || 0,
+                mimeType: item.dataset.mimeType
+            });
+        });
+
+        const newsData = {
+            title: title,
+            content: content,
+            summary: document.getElementById('newsSummary').value.trim(),
+            category: document.getElementById('newsCategory').value,
+            status: document.getElementById('newsStatus').value,
+            pinned: document.getElementById('newsPinned').checked,
+            syncToAnnouncements: document.getElementById('newsSync').checked,
+            coverImage: coverImage,
+            attachments: attachments,
+            tags: []
+        };
+
+        try {
+            let res;
+            if (newsId) {
+                res = await fetch('/api/admin/news/' + newsId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newsData)
+                });
+            } else {
+                res = await fetch('/api/admin/news', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newsData)
+                });
+            }
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || '保存失败');
+
+            // 如果是新建且有投票/报名，创建它们
+            const savedNewsId = data.news ? data.news.id : parseInt(newsId);
+
+            // 创建或更新投票
+            const voteTitle = document.getElementById('voteTitle').value.trim();
+            if (voteTitle) {
+                const optInputs = document.querySelectorAll('.vote-opt-input');
+                const options = [];
+                optInputs.forEach(input => { if (input.value.trim()) options.push(input.value.trim()); });
+                if (options.length >= 2) {
+                    if (!newsId) {
+                        // 新建新闻 - 创建投票
+                        await fetch('/api/admin/news/' + savedNewsId + '/vote', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                title: voteTitle,
+                                options: options,
+                                allowMultiple: document.getElementById('voteMultiple').checked
+                            })
+                        });
+                    }
+                    // 编辑模式下，现有投票保持不变（投票数据不应被修改，避免丢失已投票数据）
+                }
+            }
+
+            // 创建或更新报名
+            const regTitle = document.getElementById('regTitle').value.trim();
+            if (regTitle) {
+                if (!newsId) {
+                    // 新建新闻 - 创建报名
+                    const fieldsText = document.getElementById('regFields').value.trim();
+                    const fields = [];
+                    if (fieldsText) {
+                        fieldsText.split('\n').forEach(line => {
+                            const parts = line.split('|');
+                            if (parts[0] && parts[0].trim()) {
+                                fields.push({
+                                    name: parts[0].trim().replace(/\s+/g, '_'),
+                                    label: parts[0].trim(),
+                                    placeholder: (parts[1] || '').trim(),
+                                    required: (parts[2] || '').trim().toLowerCase() === 'true',
+                                    type: 'text'
+                                });
+                            }
+                        });
+                    }
+
+                    await fetch('/api/admin/news/' + savedNewsId + '/registration', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: regTitle,
+                            maxParticipants: parseInt(document.getElementById('regMaxParticipants').value) || null,
+                            endAt: document.getElementById('regEndAt').value ? new Date(document.getElementById('regEndAt').value).toISOString() : null,
+                            requireWhitelist: document.getElementById('regRequireWhitelist').checked,
+                            fields: fields
+                        })
+                    });
+                }
+                // 编辑模式下，现有报名保持不变（避免丢失已报名数据）
+            }
+
+            closeNewsEditor();
+            loadNewsList();
+            // 同时刷新公告（因为可能同步了）
+            loadContent();
+            showAdminToast(newsId ? '新闻已更新' : '新闻已发布');
+        } catch(e) {
+            showAdminToast('保存失败: ' + e.message);
+        }
+    }
+
+    async function editNews(newsId) {
+        openNewsEditor(newsId);
+    }
+
+    async function toggleNewsPin(newsId) {
+        try {
+            const news = newsList.find(n => n.id === newsId);
+            const res = await fetch('/api/admin/news/' + newsId + '/pin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pinned: !news.pinned })
+            });
+            if (res.ok) {
+                loadNewsList();
+                loadContent();
+                showAdminToast('置顶状态已更新');
+            }
+        } catch(e) { showAdminToast('操作失败'); }
+    }
+
+    async function deleteNews(newsId) {
+        if (!confirm('确定删除此新闻？相关投票、报名和附件也会被删除。')) return;
+        try {
+            const res = await fetch('/api/admin/news/' + newsId, { method: 'DELETE' });
+            if (res.ok) {
+                loadNewsList();
+                loadContent();
+                showAdminToast('新闻已删除');
+            }
+        } catch(e) { showAdminToast('删除失败'); }
+    }
+
+    // 点击 Modal 外部关闭（防拖拽误触）
+    (function() {
+        var modal = document.getElementById('newsEditorModal');
+        var isDragging = false, startX = 0, startY = 0;
+        modal.addEventListener('mousedown', function(e) { startX = e.clientX; startY = e.clientY; isDragging = false; });
+        modal.addEventListener('mousemove', function(e) { if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) isDragging = true; });
+        modal.addEventListener('click', function(e) {
+            if (isDragging) return;
+            if (e.target === this) closeNewsEditor();
+        });
+        modal.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = false; }, {passive: true});
+        modal.addEventListener('touchmove', function(e) { if (Math.abs(e.touches[0].clientX - startX) > 5 || Math.abs(e.touches[0].clientY - startY) > 5) isDragging = true; }, {passive: true});
+        modal.addEventListener('touchend', function(e) {
+            if (isDragging) return;
+            if (e.target === this) closeNewsEditor();
+        });
+    })();
+
+    // 统计弹窗防拖拽
+    (function() {
+        var modal = document.getElementById('statsModal');
+        var isDragging = false, startX = 0, startY = 0;
+        modal.addEventListener('mousedown', function(e) { startX = e.clientX; startY = e.clientY; isDragging = false; });
+        modal.addEventListener('mousemove', function(e) { if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) isDragging = true; });
+        modal.addEventListener('click', function(e) {
+            if (isDragging) return;
+            if (e.target === this) closeStatsModal();
+        });
+    })();
+</script>
+
+</body>
+</html>
