@@ -1,0 +1,26 @@
+# ==========================================
+# MSMPBridge Configuration
+# ==========================================
+
+# Website API URL (no trailing slash)
+# When running on the same server, use http://localhost:5000
+# For production with Nginx, use http://localhost:5000 or https://msmp.mplusm.site
+website-url: "http://localhost:5000"
+
+# API Key for authentication (must match website's .env PLUGIN_API_KEY)
+api-key: "msmp-plugin-2026"
+
+# Sync interval in seconds (how often to check for pending whitelist & send heartbeat)
+sync-interval: 30
+
+# Whether to automatically add pending whitelist players
+auto-whitelist: true
+
+# Whether to send player join/leave events to website
+send-player-events: true
+
+# Whether to send periodic server status (TPS, online players) to website
+send-heartbeat: true
+
+# Debug mode - logs extra information to console
+debug: false
