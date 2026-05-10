@@ -1,0 +1,99 @@
+{
+  "announcements": [
+    {
+      "id": 5,
+      "newsId": 5,
+      "title": "a",
+      "desc": "<p><br>...",
+      "date": "2026-05-10",
+      "tag": "notice",
+      "tagLabel": "通知",
+      "pinned": false
+    }
+  ],
+  "rules": [
+    {
+      "icon": "🤝",
+      "iconColor": "green",
+      "id": 1,
+      "items": [
+        "尊重所有玩家，禁止任何形式的辱骂和歧视",
+        "禁止恶意破坏他人建筑和财产",
+        "禁止利用漏洞获取不当利益",
+        "禁止使用任何破坏游戏平衡的作弊客户端或辅助工具"
+      ],
+      "title": "基本行为准则"
+    },
+    {
+      "icon": "🏠",
+      "iconColor": "gold",
+      "id": 2,
+      "items": [
+        "请在指定区域外建立领地",
+        "禁止在他人领地附近恶意建造",
+        "超过 30 天未登录的领地可能被清理",
+        "大型工程请提前与管理员沟通"
+      ],
+      "title": "领地与建筑"
+    },
+    {
+      "icon": "💰",
+      "iconColor": "diamond",
+      "id": 3,
+      "items": [
+        "禁止利用刷物 Bug 获取资源",
+        "交易请使用官方交易系统",
+        "禁止恶意操纵市场价格",
+        "交易纠纷请及时联系管理员处理"
+      ],
+      "title": "经济与交易"
+    },
+    {
+      "icon": "⚡",
+      "iconColor": "red",
+      "id": 4,
+      "items": [
+        "禁止使用高负荷红石机器造成卡顿",
+        "禁止故意制造服务器延迟",
+        "刷怪塔请控制规模，不得超过限流标准",
+        "发现漏洞请及时上报，可获得奖励"
+      ],
+      "title": "技术规范"
+    },
+    {
+      "icon": "💬",
+      "iconColor": "purple",
+      "id": 5,
+      "items": [
+        "禁止刷屏和发送无意义信息",
+        "禁止发布广告和外部链接",
+        "禁止冒充管理员或他人身份",
+        "请使用中文或英文交流"
+      ],
+      "title": "聊天规范"
+    },
+    {
+      "icon": "🔧",
+      "iconColor": "cyan",
+      "id": 6,
+      "items": [
+        "轻微违规：警告处理",
+        "一般违规：临时封禁（1-7 天）",
+        "严重违规：永久封禁",
+        "对惩罚有异议可提交申诉"
+      ],
+      "title": "惩罚机制"
+    }
+  ],
+  "serverInfo": {
+    "fullName": "Mcking&Mitch Survival Multiplayer",
+    "ip": "msmp.mplusm.site",
+    "maxPlayers": 50,
+    "motdImage": "motd.png",
+    "name": "MSMP",
+    "online": true,
+    "recommendVersion": "1.21.11",
+    "subtitle": "一个充满创造与冒险的 Minecraft 世界\n与志同道合的玩家一起探索、建造、生存",
+    "versionRange": "1.9 — 1.26"
+  }
+}
