@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables (sensitive)
+.env
+
+# Test server
+test-server/
+
+# Maven
+apache-maven-*/
+
+# Logs and temp files
+*.err.txt
+*.out.txt
+*.log
+
+# Build artifacts
+*.zip
+*.class
+target/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Uploads (generated at runtime)
+public/uploads/news/
+public/uploads/attachments/
