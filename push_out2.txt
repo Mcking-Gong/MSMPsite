@@ -1,0 +1,39 @@
+============================================================
+MSMP 网站文件推送到 GitHub
+仓库: Mcking-Gong/MSMPsite
+分支: main
+============================================================
+
+[1/4] 收集项目文件...
+  DEPLOY_GUIDE.md (24.6 KB)
+  MSMPBridge/PLUGIN_DEPLOY.md (6.6 KB)
+  MSMPBridge/pom.xml (2.3 KB)
+  MSMPBridge/src/main/java/com/msmp/bridge/APIClient.java (8.6 KB)
+  MSMPBridge/src/main/java/com/msmp/bridge/MSMPBridge.java (10.1 KB)
+  MSMPBridge/src/main/java/com/msmp/bridge/TPSTracker.java (3.0 KB)
+  MSMPBridge/src/main/java/com/msmp/bridge/commands/MSMPCommand.java (3.3 KB)
+  MSMPBridge/src/main/resources/config.yml (0.8 KB)
+  MSMPBridge/src/main/resources/plugin.yml (0.4 KB)
+  data/content.json (2.7 KB)
+  data/news.json (0.9 KB)
+  data/players.json (0.5 KB)
+  data/registrations.json (0.1 KB)
+  data/uploads.json (2.9 KB)
+  data/votes.json (0.7 KB)
+  public/Minecraft_Next_Font_12px.ttf (3.5 MB)
+  public/admin.html (75.6 KB)
+  public/icon.png (5.7 KB)
+  public/index.html (77.5 KB)
+  public/motd.png (20.2 KB)
+  public/news.html (67.5 KB)
+  push_err2.txt (0.0 KB)
+  push_out2.txt (0.0 KB)
+  requirements.txt (0.1 KB)
+  server.py (52.9 KB)
+  start.bat (0.3 KB)
+  start.sh (6.2 KB)
+
+  共 27 个文件, 3.8 MB
+
+[2/4] 初始化仓库（.gitignore + README.md）...
+  API Error 404: {"message":"This repository is empty.","documentation_url":"https://docs.github.com/v3/repos/contents/#get-contents","status":"404"}
