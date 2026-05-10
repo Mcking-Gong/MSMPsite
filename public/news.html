@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSMP - 新闻与公告</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('Minecraft_Next_Font_12px.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* ====== 深色主题变量 ====== */
+        :root, [data-theme="dark"] {
+            --mc-dark: #1a1a2e; --mc-darker: #0f0f1a;
+            --mc-green: #4ade80; --mc-green-dark: #22c55e;
+            --mc-gold: #fbbf24; --mc-diamond: #22d3ee;
+            --mc-redstone: #ef4444; --mc-purple: #a78bfa; --mc-stone: #6b7280;
+            --card-bg: rgba(30, 30, 50, 0.85); --card-border: rgba(74, 222, 128, 0.2);
+            --text-primary: #f1f5f9; --text-secondary: #94a3b8;
+            --navbar-bg: rgba(15, 15, 26, 0.92); --section-alt-bg: rgba(15, 15, 26, 0.5);
+            --footer-bg: rgba(15, 15, 26, 0.8);
+            --particle-opacity: 1;
+            --tag-update-bg: rgba(74, 222, 128, 0.15); --tag-event-bg: rgba(251, 191, 36, 0.15);
+            --tag-notice-bg: rgba(167, 139, 250, 0.15); --tag-urgent-bg: rgba(239, 68, 68, 0.15);
+            --pinned-bg: rgba(251, 191, 36, 0.03);
+            --nav-link-hover-bg: rgba(74, 222, 128, 0.1);
+            --modal-overlay-bg: rgba(0, 0, 0, 0.7);
+            --scrollbar-thumb: rgba(74, 222, 128, 0.3);
+            --toast-bg: rgba(30, 30, 50, 0.95); --toast-border: rgba(74, 222, 128, 0.3);
+            --info-chip-bg: rgba(30, 30, 50, 0.6);
+            --logo-shadow: rgba(74, 222, 128, 0.3);
+        }
+
+        /* ====== 浅色主题变量 ====== */
+        [data-theme="light"] {
+            --mc-dark: #f0f2f5; --mc-darker: #e8eaed;
+            --mc-green: #16a34a; --mc-green-dark: #15803d;
+            --mc-gold: #d97706; --mc-diamond: #0891b2;
+            --mc-redstone: #dc2626; --mc-purple: #7c3aed; --mc-stone: #6b7280;
+            --card-bg: rgba(255, 255, 255, 0.9); --card-border: rgba(22, 163, 74, 0.2);
+            --text-primary: #1e293b; --text-secondary: #64748b;
+            --navbar-bg: rgba(255, 255, 255, 0.92); --section-alt-bg: rgba(241, 245, 249, 0.6);
+            --footer-bg: rgba(255, 255, 255, 0.9);
+            --particle-opacity: 0.5;
+            --tag-update-bg: rgba(22, 163, 74, 0.1); --tag-event-bg: rgba(217, 119, 6, 0.1);
+            --tag-notice-bg: rgba(124, 58, 237, 0.1); --tag-urgent-bg: rgba(220, 38, 38, 0.1);
+            --pinned-bg: rgba(217, 119, 6, 0.04);
+            --nav-link-hover-bg: rgba(22, 163, 74, 0.08);
+            --modal-overlay-bg: rgba(0, 0, 0, 0.4);
+            --scrollbar-thumb: rgba(22, 163, 74, 0.25);
+            --toast-bg: rgba(255, 255, 255, 0.95); --toast-border: rgba(22, 163, 74, 0.25);
+            --info-chip-bg: rgba(255, 255, 255, 0.8);
+            --logo-shadow: rgba(22, 163, 74, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 15px; line-height: 1.8;
+            background: var(--mc-dark); color: var(--text-primary);
+            min-height: 100vh; overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.3s ease, color 0.3s ease;
+            display: flex; flex-direction: column; /* 页脚固定底部 */
+        }
+
+        .mc-font { font-family: 'Minecraft', 'Noto Sans SC', sans-serif; }
+
+        /* ====== 按钮 ====== */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 22px; font-size: 14px; font-weight: 600;
+            font-family: 'Noto Sans SC', sans-serif; text-decoration: none;
+            cursor: pointer; border: 1px solid transparent; border-radius: 8px;
+            transition: all 0.15s ease;
+        }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn:active { transform: translateY(2px); filter: brightness(0.95); }
+        .btn-primary { background: var(--mc-green); color: #0f0f1a; box-shadow: 0 2px 12px rgba(74, 222, 128, 0.25); }
+        .btn-primary:hover { box-shadow: 0 4px 20px rgba(74, 222, 128, 0.35); }
+        .btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--card-border); }
+        .btn-secondary:hover { border-color: var(--mc-green); background: var(--nav-link-hover-bg); }
+        .btn-cancel { background: var(--card-bg); color: var(--text-secondary); border: 1px solid var(--card-border); border-radius: 8px; }
+        .btn-sm { padding: 6px 14px; font-size: 13px; border-radius: 6px; }
+
+        /* ====== 粒子背景 ====== */
+        .bg-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; opacity: var(--particle-opacity); transition: opacity 0.3s ease; }
+        .particle { position: absolute; width: 4px; height: 4px; background: var(--mc-green); border-radius: 50%; opacity: 0; animation: floatUp linear infinite; }
+        @keyframes floatUp { 0% { opacity: 0; transform: translateY(100vh); } 10% { opacity: 0.6; } 90% { opacity: 0.6; } 100% { opacity: 0; transform: translateY(-10vh); } }
+
+        /* ====== 导航栏 ====== */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; height: 64px;
+            background: var(--navbar-bg); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+        }
+        .nav-brand { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; color: var(--text-primary); }
+        .nav-brand .logo-icon {
+            width: 38px; height: 38px; border-radius: 0; overflow: visible;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px var(--logo-shadow);
+            image-rendering: pixelated; cursor: grab; user-select: none;
+            -webkit-user-select: none; will-change: transform;
+        }
+        .nav-brand .logo-icon:active { cursor: grabbing; }
+        .nav-brand .logo-icon img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .nav-brand span {
+            font-family: 'Press Start 2P', 'Noto Sans SC', sans-serif;
+            color: var(--mc-green); text-shadow: 0 0 10px var(--logo-shadow);
+            display: inline-block; overflow: hidden; white-space: nowrap;
+            max-width: 400px; cursor: pointer;
+            transition: font-size 0.3s ease, letter-spacing 0.3s ease, max-width 0.3s ease;
+        }
+        .nav-brand span.brand-full { font-size: 9px; letter-spacing: 1px; }
+        .nav-brand span.brand-short { font-size: 16px; letter-spacing: 2px; max-width: 120px; }
+        @keyframes brandSlideOut { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-16px); } }
+        @keyframes brandSlideIn { 0% { opacity: 0; transform: translateY(16px); } 100% { opacity: 1; transform: translateY(0); } }
+        .brand-anim-out { animation: brandSlideOut 0.18s ease forwards; }
+        .brand-anim-in { animation: brandSlideIn 0.18s ease forwards; }
+
+        .nav-right { display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; transition: all 0.3s ease; position: relative; }
+        .nav-links a:hover, .nav-links a.active { color: var(--mc-green); background: var(--nav-link-hover-bg); }
+        .nav-links a.active::after { content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: var(--mc-green); border-radius: 2px; }
+
+        .nav-login-btn { padding: 8px 18px; background: var(--mc-green); color: #0f0f1a; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+        .nav-login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .nav-user { position: relative; }
+        .nav-user-info { display: none; align-items: center; gap: 8px; cursor: pointer; }
+        .nav-user-info.show { display: flex; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--mc-green); color: #0f0f1a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+        .user-name { font-weight: 500; font-size: 14px; }
+        .user-dropdown { position: absolute; top: 100%; right: 0; padding-top: 8px; min-width: 140px; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all 0.2s; }
+        .user-dropdown-inner { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 6px; backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .nav-user-info:hover .user-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+        .user-dropdown a { display: block; padding: 8px 12px; color: var(--text-secondary); text-decoration: none; border-radius: 6px; font-size: 13px; transition: all 0.15s; }
+        .user-dropdown a:hover { background: var(--nav-link-hover-bg); color: var(--text-primary); }
+        .dropdown-divider { height: 1px; background: var(--card-border); margin: 4px 0; }
+
+        /* 主题切换 - 与主页统一 */
+        .theme-toggle {
+            width: 50px; height: 28px;
+            background: rgba(30, 30, 60, 0.5);
+            border: 1px solid rgba(100, 100, 140, 0.25);
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--mc-green);
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.15);
+        }
+
+        .theme-toggle .toggle-stars {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            transition: opacity 0.5s ease;
+        }
+
+        .theme-toggle .toggle-stars span {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: rgba(200, 200, 255, 0.6);
+            border-radius: 50%;
+        }
+
+        .theme-toggle .toggle-stars span:nth-child(1) { top: 6px; left: 8px; }
+        .theme-toggle .toggle-stars span:nth-child(2) { top: 14px; left: 5px; }
+        .theme-toggle .toggle-stars span:nth-child(3) { top: 10px; left: 14px; }
+
+        .toggle-knob {
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 20px; height: 20px;
+            background: linear-gradient(135deg, #c4c4e0, #a0a0c0);
+            border-radius: 50%;
+            transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease, box-shadow 0.4s ease;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .toggle-knob.dragging { transition: none !important; }
+
+        .toggle-knob .moon {
+            position: absolute; font-size: 12px; line-height: 1;
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 1; transform: rotate(0deg) scale(1);
+        }
+
+        .toggle-knob .sun {
+            position: absolute; font-size: 12px; line-height: 1;
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0; transform: rotate(-180deg) scale(0);
+        }
+
+        [data-theme="light"] .theme-toggle { background: rgba(200, 230, 200, 0.5); border-color: rgba(22, 163, 74, 0.25); }
+        [data-theme="light"] .theme-toggle .toggle-stars { opacity: 0; }
+        [data-theme="light"] .toggle-knob { left: calc(100% - 23px); background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 1px 4px rgba(245, 158, 11, 0.4); }
+        [data-theme="light"] .toggle-knob .moon { opacity: 0; transform: rotate(180deg) scale(0); }
+        [data-theme="light"] .toggle-knob .sun { opacity: 1; transform: rotate(0deg) scale(1); }
+
+        .toggle-knob .sun.glow { filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6)); }
+        .toggle-knob .moon.glow { filter: drop-shadow(0 0 4px rgba(200, 200, 255, 0.6)); }
+
+        .hamburger { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 36px; height: 36px; background: transparent; border: 1px solid var(--card-border); border-radius: 8px; cursor: pointer; padding: 6px; flex-shrink: 0; }
+        .hamburger span { display: block; width: 18px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: all 0.3s; }
+
+        /* ====== 页面内容 ====== */
+        .page-container { position: relative; z-index: 1; padding-top: 84px; max-width: 1100px; margin: 0 auto; padding-left: 20px; padding-right: 20px; padding-bottom: 60px; flex: 1; width: 100%; }
+
+        .page-header { text-align: center; margin-bottom: 40px; }
+        .page-header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .page-header p { color: var(--text-secondary); font-size: 15px; }
+
+        /* ====== 分类筛选 ====== */
+        .category-filter { display: flex; justify-content: center; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 18px; border-radius: 20px; border: 1px solid var(--card-border); background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; font-family: 'Noto Sans SC', sans-serif; }
+        .filter-btn:hover { border-color: var(--mc-green); color: var(--mc-green); }
+        .filter-btn.active { background: var(--mc-green); color: #0f0f1a; border-color: var(--mc-green); }
+
+        /* ====== 新闻卡片列表 ====== */
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+        .news-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 12px; overflow: hidden; cursor: pointer;
+            transition: all 0.25s ease; position: relative;
+        }
+        .news-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); border-color: var(--mc-green); }
+        .news-card.pinned { border-color: var(--mc-gold); }
+        .news-card.pinned::before { content: '📌'; position: absolute; top: 10px; right: 10px; font-size: 16px; z-index: 2; }
+
+        .news-card-cover { width: 100%; height: 180px; object-fit: cover; display: block; background: var(--section-alt-bg); }
+        .news-card-cover-placeholder { width: 100%; height: 180px; background: linear-gradient(135deg, var(--card-bg), var(--section-alt-bg)); display: flex; align-items: center; justify-content: center; font-size: 48px; }
+
+        .news-card-body { padding: 16px; }
+        .news-card-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+        .tag-update { background: var(--tag-update-bg); color: var(--mc-green); }
+        .tag-event { background: var(--tag-event-bg); color: var(--mc-gold); }
+        .tag-notice { background: var(--tag-notice-bg); color: var(--mc-purple); }
+        .tag-urgent { background: var(--tag-urgent-bg); color: var(--mc-redstone); }
+
+        .news-card-title { font-size: 17px; font-weight: 600; margin-bottom: 6px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-card-summary { font-size: 13px; color: var(--text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; font-size: 12px; color: var(--text-secondary); }
+        .news-card-meta span { display: flex; align-items: center; gap: 4px; }
+
+        /* ====== 空状态 ====== */
+        .empty-state { text-align: center; padding: 80px 20px; color: var(--text-secondary); }
+        .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+        .empty-state p { font-size: 16px; }
+
+        /* ====== 详情弹窗 ====== */
+        .modal-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: var(--modal-overlay-bg); align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; width: 100%; max-width: 800px; max-height: 85vh;
+            overflow-y: auto; backdrop-filter: blur(20px);
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-card::-webkit-scrollbar { width: 6px; }
+        .modal-card::-webkit-scrollbar-track { background: transparent; }
+        .modal-card::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+        .news-detail-cover { width: 100%; max-height: 300px; object-fit: cover; display: block; }
+        .news-detail-body { padding: 28px; }
+        .news-detail-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,0.5); color: white; border: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1; transition: all 0.2s; }
+        .news-detail-close:hover { background: rgba(0,0,0,0.7); transform: scale(1.1); }
+
+        .news-detail-tag { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+        .news-detail-title { font-size: 26px; font-weight: 700; line-height: 1.4; margin-bottom: 12px; }
+        .news-detail-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; font-size: 13px; color: var(--text-secondary); flex-wrap: wrap; }
+        .news-detail-meta span { display: flex; align-items: center; gap: 4px; }
+
+        .news-detail-content { line-height: 1.9; font-size: 15px; color: var(--text-primary); }
+        .news-detail-content img { max-width: 100%; border-radius: 8px; margin: 12px 0; }
+        .news-detail-content p { margin-bottom: 12px; }
+        .news-detail-content h1, .news-detail-content h2, .news-detail-content h3 { margin: 20px 0 10px; }
+        .news-detail-content ul, .news-detail-content ol { padding-left: 24px; margin-bottom: 12px; }
+        .news-detail-content a { color: var(--mc-green); text-decoration: underline; }
+        .news-detail-content blockquote { border-left: 3px solid var(--mc-green); padding-left: 16px; margin: 12px 0; color: var(--text-secondary); }
+
+        /* 附件 */
+        .attachments-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--card-border); }
+        .attachments-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .attachment-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--section-alt-bg); border-radius: 8px; margin-bottom: 8px; font-size: 13px; transition: all 0.2s; cursor: pointer; text-decoration: none; color: var(--text-primary); }
+        .attachment-item:hover { background: var(--nav-link-hover-bg); }
+        .attachment-icon { font-size: 20px; }
+        .attachment-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .attachment-size { color: var(--text-secondary); font-size: 12px; }
+
+        /* ====== 投票区 ====== */
+        .vote-section { margin-top: 24px; padding: 20px; background: var(--section-alt-bg); border-radius: 12px; border: 1px solid var(--card-border); }
+        .vote-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .vote-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+        .vote-option { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+        .vote-option:hover { border-color: var(--mc-green); }
+        .vote-option.selected { border-color: var(--mc-green); background: var(--tag-update-bg); }
+        .vote-option input[type="radio"], .vote-option input[type="checkbox"] { accent-color: var(--mc-green); }
+        .vote-option-text { flex: 1; font-size: 14px; }
+        .vote-bar { position: absolute; left: 0; top: 0; height: 100%; background: var(--tag-update-bg); border-radius: 8px; z-index: 0; transition: width 0.5s ease; }
+        .vote-option-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; width: 100%; }
+        .vote-percent { font-size: 13px; color: var(--mc-green); font-weight: 600; min-width: 36px; text-align: right; }
+        .vote-total { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
+
+        /* ====== 报名区 ====== */
+        .reg-section { margin-top: 24px; padding: 20px; background: var(--section-alt-bg); border-radius: 12px; border: 1px solid var(--card-border); }
+        .reg-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .reg-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+        .reg-slots { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .reg-slots-bar { flex: 1; height: 6px; background: var(--card-border); border-radius: 3px; overflow: hidden; }
+        .reg-slots-fill { height: 100%; background: var(--mc-green); border-radius: 3px; transition: width 0.5s; }
+        .reg-field { margin-bottom: 12px; }
+        .reg-field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+        .reg-field input { width: 100%; padding: 8px 12px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Noto Sans SC', sans-serif; outline: none; transition: border-color 0.2s; }
+        .reg-field input:focus { border-color: var(--mc-green); }
+
+        /* ====== 玩家登录弹窗 ====== */
+        .player-modal .modal-card { max-width: 420px; }
+        .modal-tabs { display: flex; border-bottom: 1px solid var(--card-border); }
+        .modal-tab { flex: 1; padding: 12px; text-align: center; font-size: 14px; font-weight: 500; cursor: pointer; background: none; border: none; color: var(--text-secondary); border-bottom: 2px solid transparent; transition: all 0.2s; font-family: 'Noto Sans SC', sans-serif; }
+        .modal-tab.active { color: var(--mc-green); border-bottom-color: var(--mc-green); }
+        .modal-tab-content { display: none; padding: 20px; }
+        .modal-tab-content.active { display: block; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; color: var(--text-secondary); }
+        .form-group input, .form-group select { width: 100%; padding: 10px 12px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Noto Sans SC', sans-serif; outline: none; transition: border-color 0.2s; }
+        .form-group input:focus { border-color: var(--mc-green); }
+        .uuid-type-row { display: flex; gap: 16px; font-size: 13px; }
+        .uuid-type-row label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+        .error-msg { color: var(--mc-redstone); font-size: 13px; margin-bottom: 10px; display: none; }
+        .profile-info { margin-bottom: 16px; }
+        .profile-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--card-border); font-size: 13px; }
+        .profile-label { color: var(--text-secondary); }
+        .profile-value { font-weight: 500; text-align: right; max-width: 60%; word-break: break-all; }
+
+        /* ====== Toast ====== */
+        .toast { position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%); background: var(--toast-bg); border: 1px solid var(--toast-border); border-radius: 12px; padding: 12px 20px; display: flex; align-items: center; gap: 10px; z-index: 3000; backdrop-filter: blur(12px); transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); font-size: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        .toast.show { bottom: 30px; }
+
+        /* ====== 页脚 ====== */
+        .footer {
+            position: relative; z-index: 1;
+            border-top: 1px solid var(--card-border);
+            background: var(--footer-bg);
+            padding: 24px 2rem; text-align: center;
+            margin-top: auto; /* flex 推到底部 */
+        }
+        .footer-copyright {
+            font-family: 'Press Start 2P', 'Noto Sans SC', sans-serif;
+            font-size: 10px; color: var(--mc-stone); letter-spacing: 0.5px;
+        }
+
+        /* ====== 加载动画 ====== */
+        .loading { text-align: center; padding: 60px; color: var(--text-secondary); }
+        .spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid var(--card-border); border-top-color: var(--mc-green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ====== 响应式 ====== */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; height: 60px; }
+            .nav-links { display: none; position: absolute; top: 60px; left: 0; right: 0; background: var(--navbar-bg); flex-direction: column; padding: 12px; border-bottom: 1px solid var(--card-border); }
+            .nav-links.show { display: flex; }
+            .hamburger { display: flex; }
+            .nav-brand span { font-size: 9px; }
+            .page-container { padding-top: 70px; padding-left: 16px; padding-right: 16px; }
+            .page-header h1 { font-size: 24px; }
+            .news-grid { grid-template-columns: 1fr; }
+            .news-detail-title { font-size: 20px; }
+            .modal-card { max-height: 90vh; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-brand" id="navBrand">
+            <div class="logo-icon" id="logoIcon"><img src="icon.png" alt="MSMP"></div>
+            <span class="brand-full" id="brandText">Mcking&Mitch Survival Multiplayer</span>
+        </div>
+        <div class="nav-right">
+            <button class="hamburger" id="hamburgerBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">主页</a></li>
+                <li><a href="/news.html" class="active">新闻</a></li>
+                <li><a href="#" onclick="showToast('该功能还在开发中','🚧');return false">论坛</a></li>
+            </ul>
+            <div class="nav-user" id="navUser">
+                <button class="nav-login-btn" id="navLoginBtn" onclick="openPlayerModal('login')">登录</button>
+                <div class="nav-user-info" id="navUserInfo">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <span class="user-name" id="userName"></span>
+                    <div class="user-dropdown">
+                        <div class="user-dropdown-inner">
+                        <a href="#" onclick="openPlayerModal('profile');return false">个人资料</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="confirmLogout();return false">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="theme-toggle" id="themeToggle" title="切换主题">
+                <div class="toggle-stars"><span></span><span></span><span></span></div>
+                <div class="toggle-knob">
+                    <span class="moon">🌙</span>
+                    <span class="sun">☀️</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面内容 -->
+    <div class="page-container">
+        <div class="page-header">
+            <h1>📰 新闻与公告</h1>
+            <p>了解服务器最新动态、活动和公告</p>
+        </div>
+
+        <!-- 分类筛选 -->
+        <div class="category-filter" id="categoryFilter">
+            <button class="filter-btn active" data-cat="all" onclick="filterCategory('all')">全部</button>
+            <button class="filter-btn" data-cat="update" onclick="filterCategory('update')">更新</button>
+            <button class="filter-btn" data-cat="event" onclick="filterCategory('event')">活动</button>
+            <button class="filter-btn" data-cat="notice" onclick="filterCategory('notice')">通知</button>
+            <button class="filter-btn" data-cat="urgent" onclick="filterCategory('urgent')">紧急</button>
+        </div>
+
+        <!-- 新闻列表 -->
+        <div class="news-grid" id="newsGrid">
+            <div class="loading"><div class="spinner"></div><p style="margin-top:12px">加载中...</p></div>
+        </div>
+    </div>
+
+    <!-- 新闻详情弹窗 -->
+    <div class="modal-overlay" id="newsModal">
+        <div class="modal-card" style="position:relative">
+            <button class="news-detail-close" onclick="closeNewsModal()">&times;</button>
+            <div id="newsDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- 玩家登录弹窗 -->
+    <div class="modal-overlay player-modal" id="playerModal">
+        <div class="modal-card">
+            <div class="modal-tabs" id="playerModalTabs">
+                <button class="modal-tab active" data-tab="login" onclick="switchPlayerTab('login')">登录</button>
+                <button class="modal-tab" data-tab="register" onclick="switchPlayerTab('register')">注册</button>
+                <button class="modal-tab" data-tab="profile" onclick="switchPlayerTab('profile')">个人资料</button>
+            </div>
+            <div class="modal-tab-content active" id="tab-login">
+                <div class="form-group"><label>用户名</label><input type="text" id="loginUsername" placeholder="输入用户名" autocomplete="username"></div>
+                <div class="form-group"><label>密码</label><input type="password" id="loginPassword" placeholder="输入密码" autocomplete="current-password"></div>
+                <div class="error-msg" id="loginError"></div>
+                <button class="btn btn-primary" style="width:100%" onclick="handlePlayerLogin()">登录</button>
+            </div>
+            <div class="modal-tab-content" id="tab-register">
+                <div class="form-group"><label>用户名 *</label><input type="text" id="regUsername" placeholder="3-20个字符" autocomplete="username"></div>
+                <div class="form-group"><label>密码 *</label><input type="password" id="regPassword" placeholder="至少6位" autocomplete="new-password"></div>
+                <div class="form-group"><label>Minecraft 用户名 *</label><input type="text" id="regMcUsername" placeholder="游戏内显示的名称"></div>
+                <div class="form-group"><label>账号类型</label><div class="uuid-type-row"><label><input type="radio" name="uuidType" value="offline" checked> 离线模式</label><label><input type="radio" name="uuidType" value="online"> 正版在线</label></div></div>
+                <div class="form-group"><label>邮箱（选填）</label><input type="email" id="regEmail" placeholder="用于找回密码" autocomplete="email"></div>
+                <div class="error-msg" id="regError"></div>
+                <button class="btn btn-primary" style="width:100%" onclick="handlePlayerRegister()">注册并加入白名单</button>
+            </div>
+            <div class="modal-tab-content" id="tab-profile">
+                <div class="profile-info">
+                    <div class="profile-row"><span class="profile-label">用户名</span><span class="profile-value" id="profileUsername"></span></div>
+                    <div class="profile-row"><span class="profile-label">MC 用户名</span><span class="profile-value" id="profileMcName"></span></div>
+                    <div class="profile-row"><span class="profile-label">UUID</span><span class="profile-value" id="profileUUID" style="font-size:11px;word-break:break-all"></span></div>
+                    <div class="profile-row"><span class="profile-label">账号类型</span><span class="profile-value" id="profileUUIDType"></span></div>
+                    <div class="profile-row"><span class="profile-label">白名单</span><span class="profile-value" id="profileWhitelist"></span></div>
+                    <div class="profile-row"><span class="profile-label">账号状态</span><span class="profile-value" id="profileBanned"></span></div>
+                    <div class="profile-row"><span class="profile-label">注册时间</span><span class="profile-value" id="profileRegDate"></span></div>
+                </div>
+                <button class="btn btn-cancel" style="width:100%" onclick="confirmLogout()">退出登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toastIcon">📋</span>
+        <span class="toast-text" id="toastText"></span>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-copyright">&copy; 2025-2026 MSMP. Not affiliated with Mojang Studios.</div>
+    </footer>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.4/purify.min.js"></script>
+    <script>
+        // ====== 全局状态 ======
+        let allNews = [];
+        let currentCategory = 'all';
+        let currentPlayer = null;
+        let siteContent = null; // 用于获取全名
+
+        // ====== 主题 ======
+        (function() {
+            const saved = localStorage.getItem('msmp-theme');
+            if (saved) document.documentElement.setAttribute('data-theme', saved);
+            else if (window.matchMedia('(prefers-color-scheme: light)').matches)
+                document.documentElement.setAttribute('data-theme', 'light');
+        })();
+
+        // 主题切换（拖拽滑动，与主页统一）
+        (function initToggleDrag() {
+            const toggle = document.getElementById('themeToggle');
+            const knob = toggle.querySelector('.toggle-knob');
+            const html = document.documentElement;
+            let dragging = false, hasMoved = false, startX = 0, knobStartLeft = 0;
+            const MIN_LEFT = 3, MAX_LEFT = 27, MOVE_THRESHOLD = 3;
+
+            function applyTheme(next) {
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('msmp-theme', next);
+                const moon = knob.querySelector('.moon'), sun = knob.querySelector('.sun');
+                if (next === 'light') { sun.classList.add('glow'); setTimeout(() => sun.classList.remove('glow'), 600); }
+                else { moon.classList.add('glow'); setTimeout(() => moon.classList.remove('glow'), 600); }
+            }
+
+            function getKnobLeft() { return html.getAttribute('data-theme') === 'light' ? MAX_LEFT : MIN_LEFT; }
+
+            function onPointerDown(e) {
+                e.preventDefault(); dragging = true; hasMoved = false;
+                knob.classList.add('dragging');
+                startX = e.touches ? e.touches[0].clientX : e.clientX;
+                knobStartLeft = getKnobLeft();
+                knob.style.left = knobStartLeft + 'px';
+            }
+
+            function onPointerMove(e) {
+                if (!dragging) return; e.preventDefault();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                if (Math.abs(clientX - startX) > MOVE_THRESHOLD) hasMoved = true;
+                let newLeft = knobStartLeft + (clientX - startX);
+                knob.style.left = Math.max(MIN_LEFT, Math.min(MAX_LEFT, newLeft)) + 'px';
+            }
+
+            function onPointerUp(e) {
+                if (!dragging) return; dragging = false; knob.classList.remove('dragging');
+                if (!hasMoved) { knob.style.left = ''; applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); return; }
+                const next = parseFloat(knob.style.left) > (MIN_LEFT + MAX_LEFT) / 2 ? 'light' : 'dark';
+                knob.style.left = ''; applyTheme(next);
+            }
+
+            toggle.addEventListener('mousedown', onPointerDown);
+            document.addEventListener('mousemove', onPointerMove);
+            document.addEventListener('mouseup', onPointerUp);
+            toggle.addEventListener('touchstart', onPointerDown, { passive: false });
+            document.addEventListener('touchmove', onPointerMove, { passive: false });
+            document.addEventListener('touchend', onPointerUp);
+        })();
+
+        // ====== Logo 长按旋转 + 惯性 ======
+        (function initLogoSpin() {
+            const logoIcon = document.getElementById('logoIcon');
+            let isHolding = false, rotation = 0, velocity = 0, spinRAF = null, holdTimer = null, lastTime = 0;
+            const ACCELERATION = 0.8, MAX_SPEED = 30, FRICTION = 0.97;
+
+            function spinLoop(timestamp) {
+                if (!lastTime) lastTime = timestamp;
+                const dt = Math.min(timestamp - lastTime, 32); lastTime = timestamp;
+                if (isHolding) { velocity = Math.min(velocity + ACCELERATION * (dt / 16), MAX_SPEED); }
+                else { velocity *= FRICTION; if (velocity < 0.1) { velocity = 0; logoIcon.style.transform = 'rotate(' + rotation + 'deg)'; spinRAF = null; return; } }
+                rotation += velocity * (dt / 16); if (rotation >= 360) rotation -= 360;
+                logoIcon.style.transform = 'rotate(' + rotation + 'deg)';
+                spinRAF = requestAnimationFrame(spinLoop);
+            }
+
+            function startSpin(e) { e.preventDefault(); e.stopPropagation(); isHolding = true; lastTime = 0; holdTimer = setTimeout(() => { if (isHolding && !spinRAF) spinRAF = requestAnimationFrame(spinLoop); }, 150); }
+            function stopSpin() { clearTimeout(holdTimer); isHolding = false; }
+            function cancelSpin() { clearTimeout(holdTimer); isHolding = false; velocity = 0; if (spinRAF) { cancelAnimationFrame(spinRAF); spinRAF = null; } logoIcon.style.transform = 'rotate(' + rotation + 'deg)'; }
+
+            logoIcon.addEventListener('mousedown', startSpin);
+            document.addEventListener('mouseup', stopSpin);
+            logoIcon.addEventListener('touchstart', startSpin, { passive: false });
+            document.addEventListener('touchend', stopSpin);
+            document.addEventListener('touchcancel', cancelSpin);
+            window.addEventListener('blur', cancelSpin);
+        })();
+
+        // ====== 导航品牌切换 ======
+        const brandText = document.getElementById('brandText');
+        let brandShowFull = true, brandAnimating = false;
+
+        document.getElementById('navBrand').addEventListener('click', function(e) {
+            if (e.target.closest('.logo-icon')) return;
+            if (brandAnimating) return; brandAnimating = true;
+            brandText.classList.add('brand-anim-out');
+            setTimeout(() => {
+                if (brandShowFull) { brandText.textContent = 'MSMP'; brandText.classList.remove('brand-full'); brandText.classList.add('brand-short'); }
+                else { brandText.textContent = siteContent ? siteContent.serverInfo.fullName : 'Mcking&Mitch Survival Multiplayer'; brandText.classList.remove('brand-short'); brandText.classList.add('brand-full'); }
+                brandShowFull = !brandShowFull;
+                brandText.classList.remove('brand-anim-out'); brandText.classList.add('brand-anim-in');
+                setTimeout(() => { brandText.classList.remove('brand-anim-in'); brandAnimating = false; }, 200);
+            }, 200);
+        });
+
+        // ====== 汉堡菜单 ======
+        document.getElementById('hamburgerBtn').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('show');
+        });
+
+        // ====== 粒子 ======
+        (function() {
+            const c = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (8 + Math.random() * 12) + 's';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                const colors = ['var(--mc-green)', 'var(--mc-diamond)', 'var(--mc-purple)', 'var(--mc-gold)'];
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.width = p.style.height = (3 + Math.random() * 3) + 'px';
+                c.appendChild(p);
+            }
+        })();
+
+        // ====== 净化HTML内容并修复链接（防XSS + 自动补全协议前缀） ======
+        function fixLinksInContent(html) {
+            if (!html) return html;
+            // DOMPurify 净化（深度防御，服务端已净化）
+            var clean = DOMPurify.sanitize(html, {
+                ALLOWED_TAGS: ['p','br','hr','blockquote','pre','code','h1','h2','h3','h4','h5','h6','ul','ol','li','strong','em','b','i','u','s','strike','del','ins','a','img','span','div','table','thead','tbody','tr','th','td','sub','sup'],
+                ALLOWED_ATTR: ['href','target','rel','title','src','alt','width','height','style','class'],
+                ALLOW_DATA_ATTR: false
+            });
+            // 用临时div解析HTML，遍历所有<a>标签补全协议
+            var div = document.createElement('div');
+            div.innerHTML = clean;
+            div.querySelectorAll('a').forEach(function(a) {
+                var href = a.getAttribute('href');
+                if (href && !href.match(/^https?:\/\//i) && !href.startsWith('/') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+                    a.setAttribute('href', 'https://' + href);
+                }
+                // 确保外链在新标签打开
+                if (a.getAttribute('href') && a.getAttribute('href').match(/^https?:\/\//i)) {
+                    a.setAttribute('target', '_blank');
+                    a.setAttribute('rel', 'noopener noreferrer');
+                }
+            });
+            return div.innerHTML;
+        }
+
+        // ====== 加载新闻 ======
+        async function loadNews() {
+            try {
+                const res = await fetch('/api/news');
+                const data = await res.json();
+                allNews = data.news || [];
+                renderNews();
+            } catch(e) {
+                document.getElementById('newsGrid').innerHTML =
+                    '<div class="empty-state"><div class="icon">😞</div><p>加载新闻失败，请刷新重试</p></div>';
+            }
+        }
+
+        // ====== 加载站点内容（用于品牌名） ======
+        async function loadSiteContent() {
+            try {
+                const res = await fetch('/api/content');
+                siteContent = await res.json();
+            } catch(e) {}
+        }
+
+        // ====== 渲染新闻列表 ======
+        function renderNews() {
+            const grid = document.getElementById('newsGrid');
+            const filtered = currentCategory === 'all'
+                ? allNews
+                : allNews.filter(n => n.category === currentCategory);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>暂无新闻</p></div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(n => {
+                const catLabels = { update: '更新', event: '活动', notice: '通知', urgent: '紧急' };
+                const catIcons = { update: '🔄', event: '🎉', notice: '📢', urgent: '🚨' };
+                // 转义标题和摘要，防 XSS
+                const safeTitle = DOMPurify.sanitize(n.title, {ALLOWED_TAGS: []});
+                const safeSummary = DOMPurify.sanitize(n.summary || '', {ALLOWED_TAGS: []});
+                return `
+                <div class="news-card${n.pinned ? ' pinned' : ''}" onclick="openNewsDetail(${n.id})">
+                    ${n.coverImage
+                        ? `<img class="news-card-cover" src="${DOMPurify.sanitize(n.coverImage, {ALLOWED_TAGS: []})}" alt="${safeTitle}">`
+                        : `<div class="news-card-cover-placeholder">${catIcons[n.category] || '📰'}</div>`
+                    }
+                    <div class="news-card-body">
+                        <span class="news-card-tag tag-${n.category}">${catLabels[n.category] || '通知'}</span>
+                        <div class="news-card-title">${safeTitle}</div>
+                        <div class="news-card-summary">${safeSummary}</div>
+                        <div class="news-card-meta">
+                            <span>📅 ${(n.publishedAt || '').slice(0, 10)}</span>
+                            <span>👁 ${n.viewCount || 0}</span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // ====== 分类筛选 ======
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.filter-btn').forEach(b =>
+                b.classList.toggle('active', b.dataset.cat === cat));
+            renderNews();
+        }
+
+        // ====== 打开新闻详情 ======
+        async function openNewsDetail(newsId) {
+            const modal = document.getElementById('newsModal');
+            const content = document.getElementById('newsDetailContent');
+            content.innerHTML = '<div class="loading" style="padding:60px"><div class="spinner"></div></div>';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            try {
+                const res = await fetch(`/api/news/${newsId}`);
+                const news = await res.json();
+                if (!res.ok) throw new Error(news.error || '加载失败');
+
+                const catLabels = { update: '更新', event: '活动', notice: '通知', urgent: '紧急' };
+                const safeTitle = DOMPurify.sanitize(news.title, {ALLOWED_TAGS: []});
+                let html = '';
+
+                if (news.coverImage) {
+                    html += `<img class="news-detail-cover" src="${DOMPurify.sanitize(news.coverImage, {ALLOWED_TAGS: []})}" alt="${safeTitle}">`;
+                }
+
+                html += `<div class="news-detail-body">
+                    <span class="news-detail-tag tag-${news.category}">${catLabels[news.category] || '通知'}</span>
+                    <h2 class="news-detail-title">${safeTitle}</h2>
+                    <div class="news-detail-meta">
+                        <span>✍️ ${news.author || 'Admin'}</span>
+                        <span>📅 ${(news.publishedAt || '').slice(0, 10)}</span>
+                        <span>👁 ${news.viewCount || 0}</span>
+                    </div>
+                    <div class="news-detail-content">${fixLinksInContent(news.content || '<p>暂无内容</p>')}</div>`;
+
+                // 附件 - 使用 /api/download/ 路由修复下载
+                if (news.attachments && news.attachments.length > 0) {
+                    const validAttachments = news.attachments.filter(att => att.url);
+                    if (validAttachments.length > 0) {
+                        html += `<div class="attachments-section">
+                            <div class="attachments-title">📎 附件下载</div>`;
+                        validAttachments.forEach(att => {
+                            const sizeStr = att.size > 1024 * 1024
+                                ? (att.size / 1024 / 1024).toFixed(1) + 'MB'
+                                : (att.size / 1024).toFixed(0) + 'KB';
+                            const ext = (att.originalName || '').split('.').pop().toLowerCase();
+                            const icons = { pdf: '📄', zip: '📦', png: '🖼️', jpg: '🖼️', jpeg: '🖼️', json: '📋', gif: '🖼️' };
+                            const downloadUrl = att.url.startsWith('/') ? '/api/download' + att.url : '/api/download/' + att.url;
+                            html += `<a class="attachment-item" href="${downloadUrl}" download="${att.originalName}">
+                                <span class="attachment-icon">${icons[ext] || '📎'}</span>
+                                <span class="attachment-name">${att.originalName}</span>
+                                <span class="attachment-size">${sizeStr}</span>
+                            </a>`;
+                        });
+                        html += '</div>';
+                    }
+                }
+
+                // 投票
+                if (news.vote) {
+                    html += renderVoteSection(news.vote);
+                }
+
+                // 报名
+                if (news.registration) {
+                    html += renderRegSection(news.registration);
+                }
+
+                html += '</div>';
+                content.innerHTML = html;
+
+                // 绑定投票事件 - 如果已投票，显示结果
+                bindVoteEvents(news.vote);
+
+            } catch(e) {
+                content.innerHTML = `<div class="empty-state"><div class="icon">😞</div><p>${e.message}</p></div>`;
+            }
+        }
+
+        // ====== 投票渲染 ======
+        function renderVoteSection(vote) {
+            let html = `<div class="vote-section" id="voteSection">
+                <div class="vote-title">🗳️ ${vote.title}</div>
+                ${vote.description ? `<div class="vote-desc">${vote.description}</div>` : ''}
+                <div id="voteOptions">`;
+
+            vote.options.forEach(opt => {
+                html += `<div class="vote-option" data-option-id="${opt.id}">
+                    <div class="vote-option-inner">
+                        <input type="${vote.allowMultiple ? 'checkbox' : 'radio'}" name="voteOption" value="${opt.id}" onclick="event.stopPropagation()">
+                        <span class="vote-option-text">${opt.text}</span>
+                    </div>
+                </div>`;
+            });
+
+            html += `</div>
+                <button class="btn btn-primary btn-sm" id="voteSubmitBtn" style="margin-top:12px">提交投票</button>
+                <div class="vote-total" id="voteTotal">已有 ${vote.totalVotes || 0} 人参与投票</div>
+            </div>`;
+            return html;
+        }
+
+        function selectVoteOption(el, allowMultiple) {
+            if (allowMultiple) {
+                el.classList.toggle('selected');
+                const cb = el.querySelector('input');
+                cb.checked = el.classList.contains('selected');
+            } else {
+                el.closest('#voteOptions').querySelectorAll('.vote-option').forEach(o => {
+                    o.classList.remove('selected');
+                    o.querySelector('input').checked = false;
+                });
+                el.classList.add('selected');
+                el.querySelector('input').checked = true;
+            }
+        }
+
+        // ====== 提交投票 ======
+        async function submitVote(voteId) {
+            if (!currentPlayer) {
+                openPlayerModal('login');
+                showToast('请先登录', '⚠️');
+                return;
+            }
+
+            const selected = document.querySelectorAll('#voteOptions .vote-option.selected');
+            if (selected.length === 0) {
+                showToast('请选择一个选项', '⚠️');
+                return;
+            }
+
+            const optionIds = Array.from(selected).map(el => el.dataset.optionId);
+
+            try {
+                const res = await fetch(`/api/votes/${voteId}/vote`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ optionIds })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || '投票失败');
+
+                // 显示结果
+                showVoteResults(data.results);
+                showToast('投票成功！', '✅');
+            } catch(e) {
+                showToast(e.message, '❌');
+            }
+        }
+
+        function showVoteResults(results) {
+            const total = results.reduce((s, r) => s + r.votes, 0);
+            const container = document.getElementById('voteOptions');
+            const submitBtn = document.getElementById('voteSubmitBtn');
+            if (submitBtn) submitBtn.style.display = 'none';
+
+            container.querySelectorAll('.vote-option').forEach(optEl => {
+                const optId = optEl.dataset.optionId;
+                const result = results.find(r => r.id === optId);
+                const pct = total > 0 ? Math.round((result.votes / total) * 100) : 0;
+
+                const bar = document.createElement('div');
+                bar.className = 'vote-bar';
+                bar.style.width = pct + '%';
+                optEl.style.position = 'relative';
+                optEl.insertBefore(bar, optEl.firstChild);
+
+                const pctSpan = document.createElement('span');
+                pctSpan.className = 'vote-percent';
+                pctSpan.textContent = pct + '%';
+                optEl.querySelector('.vote-option-inner').appendChild(pctSpan);
+
+                optEl.style.cursor = 'default';
+                optEl.onclick = null;
+                const input = optEl.querySelector('input');
+                if (input) input.disabled = true;
+            });
+
+            const totalEl = document.getElementById('voteTotal');
+            if (totalEl) totalEl.textContent = `共 ${total} 票`;
+        }
+
+        function bindVoteEvents(vote) {
+            // 绑定投票选项点击事件
+            const voteSection = document.getElementById('voteSection');
+            if (voteSection) {
+                const allowMultiple = vote && vote.allowMultiple;
+                voteSection.querySelectorAll('.vote-option').forEach(optEl => {
+                    optEl.addEventListener('click', function(e) {
+                        selectVoteOption(this, allowMultiple);
+                    });
+                });
+
+                // 绑定提交按钮
+                const submitBtn = document.getElementById('voteSubmitBtn');
+                if (submitBtn && vote) {
+                    submitBtn.addEventListener('click', function() {
+                        submitVote(vote.id);
+                    });
+                }
+            }
+
+            // 如果已投票，直接显示结果
+            if (vote && vote.hasVoted && vote.results) {
+                // 延迟一帧让DOM渲染完成
+                requestAnimationFrame(() => showVoteResults(vote.results));
+            }
+        }
+
+        // ====== 报名渲染 ======
+        function renderRegSection(reg) {
+            const current = reg.currentParticipants || 0;
+            const max = reg.maxParticipants;
+            const pct = max ? Math.round((current / max) * 100) : 0;
+
+            let html = `<div class="reg-section" id="regSection">
+                <div class="reg-title">📝 ${reg.title}</div>
+                ${reg.description ? `<div class="reg-desc">${reg.description}</div>` : ''}
+                <div class="reg-slots">
+                    <span>${current}/${max || '∞'} 人</span>
+                    <div class="reg-slots-bar"><div class="reg-slots-fill" style="width:${pct}%"></div></div>
+                </div>`;
+
+            // 自定义字段
+            if (reg.fields && reg.fields.length > 0) {
+                reg.fields.forEach(field => {
+                    html += `<div class="reg-field">
+                        <label>${field.label}${field.required ? ' *' : ''}</label>
+                        <input type="text" id="regField_${field.name}" placeholder="${field.placeholder || ''}">
+                    </div>`;
+                });
+            }
+
+            if (reg.hasRegistered) {
+                html += `<div style="margin-top:12px; padding:12px; background:var(--tag-update-bg); border-radius:8px; font-size:13px; color:var(--mc-green);">✅ 已报名${reg.registeredAt ? ' · ' + new Date(reg.registeredAt).toLocaleString('zh-CN') : ''}</div>`;
+                // 显示已填写的自定义字段值
+                if (reg.data && Object.keys(reg.data).length > 0 && reg.fields) {
+                    html += `<div style="margin-top:8px; padding:10px; background:var(--section-alt-bg); border-radius:8px; font-size:13px;">`;
+                    reg.fields.forEach(f => {
+                        if (reg.data[f.name]) {
+                            html += `<div style="margin-bottom:4px;"><span style="color:var(--text-secondary)">${f.label}：</span>${reg.data[f.name]}</div>`;
+                        }
+                    });
+                    html += '</div>';
+                }
+                html += `<button class="btn btn-secondary" style="width:100%;margin-top:12px" onclick="cancelRegistration(${reg.id})">取消报名</button>`;
+            } else if (max && current >= max) {
+                html += `<button class="btn btn-cancel" style="width:100%" disabled>名额已满</button>`;
+            } else {
+                html += `<button class="btn btn-primary" style="width:100%" onclick="submitRegistration(${reg.id})">立即报名</button>`;
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        // ====== 提交报名 ======
+        async function submitRegistration(regId) {
+            if (!currentPlayer) {
+                openPlayerModal('login');
+                showToast('请先登录', '⚠️');
+                return;
+            }
+
+            const fieldData = {};
+            document.querySelectorAll('.reg-field input').forEach(input => {
+                const name = input.id.replace('regField_', '');
+                fieldData[name] = input.value;
+            });
+
+            try {
+                const res = await fetch(`/api/registrations/${regId}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(fieldData)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || '报名失败');
+
+                showToast('报名成功！', '✅');
+            } catch(e) {
+                showToast(e.message, '❌');
+            }
+        }
+
+        // ====== 取消报名 ======
+        async function cancelRegistration(regId) {
+            if (!confirm('确定要取消报名吗？')) return;
+
+            try {
+                const res = await fetch(`/api/registrations/${regId}/cancel`, { method: 'POST' });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || '取消失败');
+                showToast('已取消报名', '✅');
+            } catch(e) {
+                showToast(e.message, '❌');
+            }
+        }
+
+        // ====== 关闭弹窗 ======
+        function closeNewsModal() {
+            document.getElementById('newsModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 防止拖拽/滑动误触关闭弹窗
+        (function() {
+            var modal = document.getElementById('newsModal');
+            var isDragging = false, startX = 0, startY = 0;
+            modal.addEventListener('mousedown', function(e) { startX = e.clientX; startY = e.clientY; isDragging = false; });
+            modal.addEventListener('mousemove', function(e) { if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) isDragging = true; });
+            modal.addEventListener('click', function(e) {
+                if (isDragging) return; // 拖拽中不关闭
+                if (e.target === this) closeNewsModal();
+            });
+            // 触摸设备同样处理
+            modal.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = false; }, {passive: true});
+            modal.addEventListener('touchmove', function(e) { if (Math.abs(e.touches[0].clientX - startX) > 5 || Math.abs(e.touches[0].clientY - startY) > 5) isDragging = true; }, {passive: true});
+            modal.addEventListener('touchend', function(e) {
+                if (isDragging) return;
+                if (e.target === this) closeNewsModal();
+            });
+        })();
+
+        // ====== 玩家登录/注册 ======
+        function openPlayerModal(tab) {
+            const modal = document.getElementById('playerModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            switchPlayerTab(tab);
+        }
+
+        function closePlayerModal() {
+            document.getElementById('playerModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        (function() {
+            var modal = document.getElementById('playerModal');
+            var isDragging = false, startX = 0, startY = 0;
+            modal.addEventListener('mousedown', function(e) { startX = e.clientX; startY = e.clientY; isDragging = false; });
+            modal.addEventListener('mousemove', function(e) { if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) isDragging = true; });
+            modal.addEventListener('click', function(e) {
+                if (isDragging) return;
+                if (e.target === this) closePlayerModal();
+            });
+        })();
+
+        function switchPlayerTab(tab) {
+            document.querySelectorAll('#playerModalTabs .modal-tab').forEach(t =>
+                t.classList.toggle('active', t.dataset.tab === tab));
+            document.querySelectorAll('#playerModal .modal-tab-content').forEach(c =>
+                c.classList.toggle('active', c.id === 'tab-' + tab));
+        }
+
+        async function handlePlayerLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errEl = document.getElementById('loginError');
+
+            if (!username || !password) { errEl.textContent = '请填写用户名和密码'; errEl.style.display = 'block'; return; }
+
+            try {
+                const res = await fetch('/api/player/login', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || '登录失败');
+
+                currentPlayer = data.player;
+                updateNavUser();
+                closePlayerModal();
+                showToast('登录成功！', '✅');
+            } catch(e) {
+                errEl.textContent = e.message; errEl.style.display = 'block';
+            }
+        }
+
+        async function handlePlayerRegister() {
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const mcUsername = document.getElementById('regMcUsername').value.trim();
+            const mcUUIDType = document.querySelector('input[name="uuidType"]:checked').value;
+            const email = document.getElementById('regEmail').value.trim();
+            const errEl = document.getElementById('regError');
+
+            try {
+                const res = await fetch('/api/player/register', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, mcUsername, mcUUIDType, email })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || '注册失败');
+
+                currentPlayer = data.player;
+                updateNavUser();
+                closePlayerModal();
+                showToast('注册成功！已自动加入白名单', '✅');
+            } catch(e) {
+                errEl.textContent = e.message; errEl.style.display = 'block';
+            }
+        }
+
+        async function playerLogout() {
+            await fetch('/api/player/logout', { method: 'POST' });
+            currentPlayer = null;
+            updateNavUser();
+            closePlayerModal();
+            showToast('已退出登录', '👋');
+        }
+
+        function confirmLogout() {
+            if (confirm('确定要退出登录吗？')) {
+                playerLogout();
+            }
+        }
+
+        function updateNavUser() {
+            const loginBtn = document.getElementById('navLoginBtn');
+            const userInfo = document.getElementById('navUserInfo');
+            if (currentPlayer) {
+                loginBtn.style.display = 'none';
+                userInfo.classList.add('show');
+                document.getElementById('userAvatar').textContent = currentPlayer.username.charAt(0).toUpperCase();
+                document.getElementById('userName').textContent = currentPlayer.username;
+                // 更新个人资料
+                document.getElementById('profileUsername').textContent = currentPlayer.username;
+                document.getElementById('profileMcName').textContent = currentPlayer.mcUsername;
+                document.getElementById('profileUUID').textContent = currentPlayer.mcUUID;
+                document.getElementById('profileUUIDType').textContent = currentPlayer.mcUUIDType === 'online' ? '正版在线' : '离线模式';
+                document.getElementById('profileWhitelist').textContent = currentPlayer.whitelisted ? '✅ 已加入' : '❌ 未加入';
+                const banEl = document.getElementById('profileBanned');
+                if (banEl) {
+                    banEl.textContent = currentPlayer.banned ? '🚫 已封禁' : '✅ 正常';
+                    banEl.style.color = currentPlayer.banned ? 'var(--mc-redstone, #ef4444)' : 'var(--mc-green, #4ade80)';
+                }
+                document.getElementById('profileRegDate').textContent = (currentPlayer.registeredAt || '').slice(0, 10);
+            } else {
+                loginBtn.style.display = 'block';
+                userInfo.classList.remove('show');
+            }
+        }
+
+        async function checkPlayerAuth() {
+            try {
+                const res = await fetch('/api/player/check');
+                const data = await res.json();
+                if (data.authenticated) {
+                    currentPlayer = data.player;
+                    updateNavUser();
+                }
+            } catch(e) {}
+        }
+
+        // ====== Toast ======
+        function showToast(msg, icon = '📋') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastIcon').textContent = icon;
+            document.getElementById('toastText').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ====== URL hash 跳转 ======
+        function checkHash() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#news-')) {
+                const newsId = parseInt(hash.replace('#news-', ''));
+                if (newsId) openNewsDetail(newsId);
+            }
+        }
+
+        // ====== 初始化 ======
+        loadNews();
+        loadSiteContent();
+        checkPlayerAuth();
+        checkHash();
+    </script>
+</body>
+</html>
