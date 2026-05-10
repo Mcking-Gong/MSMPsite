@@ -1,0 +1,38 @@
+{
+  "votes": [
+    {
+      "id": 4,
+      "newsId": 5,
+      "title": "a",
+      "description": "",
+      "type": "single",
+      "options": [
+        {
+          "id": "opt_0",
+          "text": "a",
+          "votes": 1
+        },
+        {
+          "id": "opt_1",
+          "text": "s",
+          "votes": 0
+        }
+      ],
+      "allowMultiple": true,
+      "maxChoices": 2,
+      "startAt": "2026-05-10T12:28:56.283659",
+      "endAt": null,
+      "status": "active",
+      "totalVotes": 1,
+      "voterIds": [
+        1
+      ],
+      "voters": {
+        "1": [
+          "opt_0"
+        ]
+      }
+    }
+  ],
+  "nextVoteId": 5
+}
