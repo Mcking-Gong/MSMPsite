@@ -1,0 +1,47 @@
+{
+  "news": [
+    {
+      "id": 5,
+      "title": "a",
+      "content": "<p><br>",
+      "summary": "",
+      "author": "Admin",
+      "createdAt": "2026-05-10T12:28:55.930540",
+      "updatedAt": "2026-05-10T12:29:04.784539",
+      "publishedAt": "2026-05-10T12:29:04.784554",
+      "status": "published",
+      "pinned": false,
+      "category": "notice",
+      "tags": [],
+      "coverImage": null,
+      "attachments": [],
+      "syncToAnnouncements": true,
+      "viewCount": 1,
+      "voteId": 4,
+      "registrationId": null
+    }
+  ],
+  "nextNewsId": 6,
+  "categories": [
+    {
+      "id": "update",
+      "name": "更新",
+      "color": "green"
+    },
+    {
+      "id": "event",
+      "name": "活动",
+      "color": "gold"
+    },
+    {
+      "id": "notice",
+      "name": "通知",
+      "color": "purple"
+    },
+    {
+      "id": "urgent",
+      "name": "紧急",
+      "color": "red"
+    }
+  ]
+}
