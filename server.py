@@ -124,7 +124,11 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24小时
 
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    async_mode=os.getenv('SOCKETIO_ASYNC_MODE', 'gevent'),
+)
 
 DATA_FILE = os.path.join(script_dir, 'data', 'content.json')
 PLAYERS_FILE = os.path.join(script_dir, 'data', 'players.json')
@@ -1548,6 +1552,7 @@ def on_request_content():
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
+    debug_mode = os.getenv('DEBUG', 'false').lower() in {'1', 'true', 'yes', 'on'}
     print(f"MSMP Server: http://localhost:{port}")
     print(f"Admin Panel: http://localhost:{port}/admin")
-    socketio.run(app, host='0.0.0.0', port=port, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='0.0.0.0', port=port, debug=debug_mode)
